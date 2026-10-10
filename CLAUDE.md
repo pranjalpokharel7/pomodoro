@@ -102,6 +102,7 @@ No test suite. Verify in a real browser (Chrome DevTools MCP works well):
 - `body` must not use `overflow: hidden`, because the card can be taller than short screens. Only `overflow-x` is hidden.
 - The Quicksand font comes from Google Fonts and needs internet. Offline it falls back to a system font and everything else still works.
 - Autoplay: the radio and chime need a user click first. Start and Play lofi are those clicks.
+- Cache busting: every local stylesheet and script link in `index.html` ends in `?v=N`, so a deployed site doesn't serve stale files (GitHub Pages caches about 10 minutes). Before each deploy that changes a CSS or JS file, bump them all: `sed -i -E 's/\?v=[0-9]+/?v=3/g' index.html` (use the next number). `index.html` itself can't be versioned, so it may still lag a few minutes.
 
 ## Ideas not done yet
 
