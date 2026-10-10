@@ -18,6 +18,7 @@ Object.keys(inputs).forEach(m => {
 
 // Close the settings panel when clicking elsewhere.
 document.addEventListener('click', e => {
-  const d = document.querySelector('.settings');
-  if (!d.contains(e.target)) d.open = false;
+  document.querySelectorAll('.settings').forEach(d => {
+    if (!d.contains(e.target)) d.open = false;
+  });
 });

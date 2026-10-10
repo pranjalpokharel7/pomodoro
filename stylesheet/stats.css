@@ -20,6 +20,26 @@
   margin: 0.1rem 0 0.9rem;
 }
 
+.board {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: -0.4rem 0 0.9rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.board .on {
+  font-weight: 700;
+}
+
+.board .on::before {
+  content: '● ';
+  color: var(--accent);
+}
+
 .total h2 {
   margin: 0;
   font-weight: 600;

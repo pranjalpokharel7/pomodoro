@@ -16,7 +16,7 @@ A cute, minimal static pomodoro timer. No build step, no dependencies, no framew
 
 Code map. Scripts are plain `<script>` tags (ES modules don't load from `file://`) that share globals, so keep the load order below. Styles load in the order listed too (later files win ties, so `stylesheet/buttons.css` stays before `stylesheet/timer.css`).
 
-- `index.html`: page structure and the script/stylesheet tags. Settings (⚙️) and ✨ sit outside the card, fixed top-right. The card holds the stats row, mode tabs, timer ring, Start/Reset, and the radio controls. Element ids used by scripts: `motivate`, `quote`, `focusMin`/`shortMin`/`longMin`, `total`, `clear`, `sessions`, `ring`, `time`, `toggle`, `reset`, `skip`, `music`, `vol`, `station`.
+- `index.html`: page structure and the script/stylesheet tags. `<body>` starts with class `locked`: only the full-screen sign-in form `#gate` (email, password, Sign in, no card) shows, and `main`, `.corner` and the quote are hidden until `profile.js` signs in. Settings (⚙️) and ✨ sit outside the card, fixed top-right, and the Sign out button (log-out icon, tooltip shows the name) is fixed bottom-right. The card holds the stats row, mode tabs, timer ring, Start/Reset, and the radio controls. Element ids used by scripts: `gate`, `email`, `pw`, `signout`, `board`, `motivate`, `quote`, `focusMin`/`shortMin`/`longMin`, `total`, `clear`, `sessions`, `ring`, `time`, `toggle`, `reset`, `skip`, `music`, `vol`, `station`.
 
 Scripts, in load order:
 
@@ -25,6 +25,7 @@ Scripts, in load order:
 - `scripts/radio.js`: lofi radio. `stationUrl()`, `userVol`, `applyVolume()` with the `FADE_MS`/`CHIME_MS` ducking, `duckForChime()` (called by `finish()`), `PLAY`/`PAUSE` icons, `radioPlay()`/`radioStop()`, and the volume and station handlers.
 - `scripts/quotes.js`: the `QUOTES` list, `QUOTE_MS`, the shuffled bag, and the ✨ and quote click handlers.
 - `scripts/settings.js`: restores and saves the minutes inputs (`pomo-mins`), and closes the settings panel on outside click.
+- `scripts/profile.js`: email/password sign-in through the full-screen `#gate` form, sign-out from the bottom-right `#signout` button (stops the timer and radio, pushes the last score, then wipes this device's local totals so the next person here starts clean), `applyAuth()` toggling `body.locked` (a cosmetic gate: the database rules are the real lock), and a scoreboard (`#board`, only shown when signed in) synced every 30s with Firebase over plain `fetch`, no SDK. The session is kept in `localStorage` as `pomo-auth` (ID token plus refresh token, refreshed hourly; a changed password signs the device out at the next refresh) and the last email as `pomo-email`. See "Profiles and passwords" below. Sign-in takes the max of local and cloud totals so a new device doesn't overwrite.
 - `scripts/main.js`: the initial `setMode('focus')`. Must stay last.
 
 Styles, in load order:
@@ -42,6 +43,28 @@ Other:
 
 - `bg.jpg`: cozy lamp-corner photo by Claire on Unsplash (Unsplash License, no credit needed). Stored locally so it works offline.
 - `tools/stations.py`: finds SomaFM stations to add to the dropdown (see below).
+
+## Profiles and passwords
+
+- No names, emails or passwords in the code. Users are real Firebase Auth email/password users made in the console (Authentication → Users → Add user).
+- Add a person: just add the user in the console. On their first sign-in the app asks "What should we call you?" and saves it as the Firebase display name (the console can't set it), and the name is copied into their score record so the scoreboard can show it.
+- Change or reset a password: Firebase console → Authentication → Users → ⋮ (or the user's own reset email). No code change, no cache delay.
+- Scores live at `/scores/<uid>` as `{name, total, sessions}`. The scoreboard shows every record that has a `name`.
+- Database rules (Firebase console → Realtime Database → Rules). Each user can only write their own score, and only signed-in users can read:
+
+```json
+{
+  "rules": {
+    "scores": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.child('total').isNumber() && newData.child('sessions').isNumber() && newData.child('name').isString() && newData.child('name').val().length <= 20"
+      }
+    }
+  }
+}
+```
 
 ## How it behaves
 
