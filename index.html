@@ -6,14 +6,14 @@
   <title>Pomodoro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="stylesheet/theme.css?v=2">
-  <link rel="stylesheet" href="stylesheet/base.css?v=2">
-  <link rel="stylesheet" href="stylesheet/buttons.css?v=2">
-  <link rel="stylesheet" href="stylesheet/stats.css?v=2">
-  <link rel="stylesheet" href="stylesheet/timer.css?v=2">
-  <link rel="stylesheet" href="stylesheet/radio.css?v=2">
-  <link rel="stylesheet" href="stylesheet/settings.css?v=2">
-  <link rel="stylesheet" href="stylesheet/quotes.css?v=2">
+  <link rel="stylesheet" href="stylesheet/theme.css?v=8">
+  <link rel="stylesheet" href="stylesheet/base.css?v=8">
+  <link rel="stylesheet" href="stylesheet/buttons.css?v=8">
+  <link rel="stylesheet" href="stylesheet/stats.css?v=8">
+  <link rel="stylesheet" href="stylesheet/timer.css?v=8">
+  <link rel="stylesheet" href="stylesheet/radio.css?v=8">
+  <link rel="stylesheet" href="stylesheet/settings.css?v=8">
+  <link rel="stylesheet" href="stylesheet/quotes.css?v=8">
 </head>
 <body data-mode="focus" class="locked">
   <form id="gate" class="gate">
@@ -36,6 +36,14 @@
 
   <button id="signout" class="round signout" title="Sign out" aria-label="Sign out"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
 
+  <section id="lb" class="lb">
+    <header>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <button id="boardclose" class="icon" title="Close leaderboard" aria-label="Close leaderboard">✕</button>
+    </header>
+    <p id="board" class="board"></p>
+  </section>
+  <button id="boardbtn" class="round boardbtn" title="Leaderboard" aria-label="Leaderboard"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></button>
   <main>
     <header class="total">
       <div class="stat">
@@ -50,7 +58,6 @@
         <div class="row"><h2 id="sessions">0</h2></div>
       </div>
     </header>
-    <p id="board" class="board"></p>
 
     <div class="modes">
       <button data-mode="focus" class="active">Focus</button>
@@ -100,12 +107,12 @@
     <p class="credit">Streamed from <a href="https://somafm.com" target="_blank" rel="noopener">SomaFM</a></p>
   </main>
   <p id="quote" class="quote" role="status" aria-live="polite"></p>
-  <script src="scripts/common.js?v=2"></script>
-  <script src="scripts/timer.js?v=2"></script>
-  <script src="scripts/radio.js?v=2"></script>
-  <script src="scripts/quotes.js?v=2"></script>
-  <script src="scripts/settings.js?v=2"></script>
-  <script src="scripts/profile.js?v=2"></script>
-  <script src="scripts/main.js?v=2"></script>
+  <script src="scripts/common.js?v=8"></script>
+  <script src="scripts/timer.js?v=8"></script>
+  <script src="scripts/radio.js?v=8"></script>
+  <script src="scripts/quotes.js?v=8"></script>
+  <script src="scripts/settings.js?v=8"></script>
+  <script src="scripts/profile.js?v=8"></script>
+  <script src="scripts/main.js?v=8"></script>
 </body>
 </html>

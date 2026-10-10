@@ -20,15 +20,67 @@
   margin: 0.1rem 0 0.9rem;
 }
 
+/* Leaderboard card, top-left: trophy + close button on top, scores below. */
+.lb {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 2;
+  min-width: 12rem;
+  padding: 0.8rem 1.2rem 1rem;
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px rgba(120, 80, 100, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.lb:has(.board:empty),
+.lb.shut { display: none; }
+
+.lb header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  opacity: 0.7;
+}
+
 .board {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: -0.4rem 0 0.9rem;
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.75;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Close button blends into the card: no pill, no shadow. */
+.lb header button {
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Trophy button, top-left, only while the card is closed. */
+.boardbtn {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 2;
+}
+
+.lb:not(.shut) ~ .boardbtn { display: none; }
+
+/* Narrow screens: no room at the side, so show it as a card above the main card. */
+@media (max-width: 900px) {
+  .lb {
+    position: static;
+    margin: 0.5rem auto;
+    width: min(320px, 92vw);
+    box-sizing: border-box;
+  }
 }
 
 .board .on {

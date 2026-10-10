@@ -72,10 +72,10 @@ async function sync() {
     const all = (await get('')) || {};
     $('board').replaceChildren(...Object.entries(all)
       .filter(([, v]) => typeof v?.name === 'string')
-      .sort(([, a], [, b]) => a.name.localeCompare(b.name))
-      .map(([uid, v]) => {
+      .sort(([, a], [, b]) => (Number(b.total) || 0) - (Number(a.total) || 0) || a.name.localeCompare(b.name))
+      .map(([uid, v], i) => {
         const s = document.createElement('span');
-        s.textContent = `${v.name} ${hms(Number(v.total) || 0)} · ${Number(v.sessions) || 0}`;
+        s.textContent = `${i + 1}. ${v.name} ${hms(Number(v.total) || 0)}`;
         s.className = uid === auth?.uid ? 'on' : '';
         return s;
       }));
@@ -121,3 +121,5 @@ $('signout').onclick = async () => {
 
 sync();
 setInterval(sync, 30000);
+
+$('boardclose').onclick = $('boardbtn').onclick = () => $('lb').classList.toggle('shut');

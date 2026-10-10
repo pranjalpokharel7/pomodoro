@@ -75,6 +75,8 @@ body.locked .gate {
 body.locked main,
 body.locked .corner,
 body.locked .signout,
+body.locked .boardbtn,
+body.locked .lb,
 body.locked .quote { display: none; }
 
 .gate h1 {
