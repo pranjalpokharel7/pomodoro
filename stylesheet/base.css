@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 5rem 0 1rem;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  overflow-x: hidden;
+  /* Mode-coloured wash over the photo, so each mode still feels different. */
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--g1) 55%, transparent), color-mix(in srgb, var(--g2) 55%, transparent)),
+    url("../bg.jpg") center / cover fixed,
+    var(--g1);
+  color: var(--ink);
+  font-family: "Quicksand", "Nunito", system-ui, sans-serif;
+  transition: --g1 0.6s, --g2 0.6s;
+}
+
+/* Floating glow blobs */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  width: 40vmax;
+  height: 40vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 70%);
+  filter: blur(20px);
+  z-index: -1;
+  animation: float 18s ease-in-out infinite alternate;
+}
+
+body::before { top: -15vmax; left: -10vmax; }
+body::after { bottom: -18vmax; right: -12vmax; animation-delay: -9s; }
+
+@keyframes float {
+  to { transform: translate(6vmax, 5vmax) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after { animation: none; }
+}
+
+main {
+  text-align: center;
+  width: min(320px, 92vw);
+  padding: 1.2rem 1.2rem 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 2rem;
+  box-shadow: 0 20px 60px rgba(120, 80, 100, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}

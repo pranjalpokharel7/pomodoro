@@ -1,0 +1,27 @@
+.total {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.total p {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.total .row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0.1rem 0 0.9rem;
+}
+
+.total h2 {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}

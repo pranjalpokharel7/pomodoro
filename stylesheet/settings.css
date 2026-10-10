@@ -1,0 +1,66 @@
+/* Settings float top-right on the background, outside the card. */
+.corner {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.settings {
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.round,
+.settings summary {
+  list-style: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.settings summary::-webkit-details-marker { display: none; }
+
+.settings .panel {
+  position: absolute;
+  top: 3.2rem;
+  right: 0;
+  width: 13rem;
+  padding: 0.6rem 1rem;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 1.2rem;
+  box-shadow: 0 10px 30px rgba(120, 80, 100, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.settings label {
+  display: grid;
+  grid-template-columns: 1fr 3.5rem auto;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.settings input {
+  width: 3.5rem;
+  font: inherit;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+}

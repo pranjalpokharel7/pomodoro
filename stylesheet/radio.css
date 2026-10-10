@@ -1,0 +1,36 @@
+.music {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.8rem;
+}
+
+#music { width: 2.6rem; padding: 0.5rem 0; font-size: 1.2rem; background: none; box-shadow: none; }
+#music:hover { box-shadow: none; }
+#music svg { display: block; margin: auto; }
+
+.music input { width: 6rem; accent-color: var(--accent); }
+
+.music select {
+  font: inherit;
+  font-size: 0.85rem;
+  max-width: 100%;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.music select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.credit {
+  margin: 0.4rem 0 0;
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.credit a { color: inherit; }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="stylesheet/theme.css">
+  <link rel="stylesheet" href="stylesheet/base.css">
+  <link rel="stylesheet" href="stylesheet/buttons.css">
+  <link rel="stylesheet" href="stylesheet/stats.css">
+  <link rel="stylesheet" href="stylesheet/timer.css">
+  <link rel="stylesheet" href="stylesheet/radio.css">
+  <link rel="stylesheet" href="stylesheet/settings.css">
+  <link rel="stylesheet" href="stylesheet/quotes.css">
+</head>
+<body data-mode="focus">
+  <div class="corner">
+    <button id="motivate" class="round" title="Motivate me" aria-label="Show a motivational quote">✨</button>
+    <details class="settings">
+      <summary title="Settings" aria-label="Settings">⚙️</summary>
+      <div class="panel">
+        <label>Focus <input type="number" id="focusMin" min="1" max="180" value="25"> min</label>
+        <label>Short break <input type="number" id="shortMin" min="1" max="60" value="5"> min</label>
+        <label>Long break <input type="number" id="longMin" min="1" max="120" value="15"> min</label>
+      </div>
+    </details>
+  </div>
+
+  <main>
+    <header class="total">
+      <div class="stat">
+        <p>Total studied</p>
+        <div class="row">
+          <h2 id="total">00:00:00</h2>
+          <button id="clear" class="icon" title="Clear total and sessions" aria-label="Clear total and sessions">🗑️</button>
+        </div>
+      </div>
+      <div class="stat">
+        <p>Sessions</p>
+        <div class="row"><h2 id="sessions">0</h2></div>
+      </div>
+    </header>
+
+    <div class="modes">
+      <button data-mode="focus" class="active">Focus</button>
+      <button data-mode="short">Short break</button>
+      <button data-mode="long">Long break</button>
+    </div>
+
+    <div class="timer">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54"></circle>
+        <circle id="ring" cx="60" cy="60" r="54"></circle>
+      </svg>
+      <div id="time">25:00</div>
+    </div>
+
+    <div class="controls">
+      <button id="toggle" class="primary">Start</button>
+      <button id="reset">Reset</button>
+      <button id="skip" hidden>Skip break</button>
+    </div>
+
+    <div class="music">
+      <button id="music" aria-label="Play lofi radio" title="Play lofi"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg></button>
+      <input type="range" id="vol" min="0" max="1" step="0.05" value="0.5" aria-label="Volume">
+    </div>
+    <div class="music">
+      <select id="station" aria-label="Radio station">
+        <option value="groovesalad">Groove Salad · chill downtempo</option>
+        <option value="fluid">Fluid · instrumental hip-hop</option>
+        <option value="lush">Lush · soft vocals</option>
+        <option value="synphaera">Synphaera · calm ambient</option>
+        <option value="deepspaceone">Deep Space One · deep ambient</option>
+        <option value="dronezone">Drone Zone · atmospheric</option>
+        <option value="beatblender">Beat Blender · electronic</option>
+        <option value="chillits">Chillits Radio · chill, live</option>
+        <option value="darkzone">The Dark Zone · ambient</option>
+        <option value="doomed">Doomed · ambient, industrial</option>
+        <option value="dz2">Drone Zone 2 · ambient</option>
+        <option value="groovesalad2">Groove Salad 2 · ambient, electronic</option>
+        <option value="gsclassic">Groove Salad Classic · ambient, electronic</option>
+        <option value="missioncontrol">Mission Control · ambient, electronic</option>
+        <option value="n5md">n5MD Radio · specials</option>
+        <option value="sf1033">SF 10-33 · ambient, news</option>
+        <option value="spacestation">Space Station Soma · electronic</option>
+      </select>
+    </div>
+    <p class="credit">Streamed from <a href="https://somafm.com" target="_blank" rel="noopener">SomaFM</a></p>
+  </main>
+  <p id="quote" class="quote" role="status" aria-live="polite"></p>
+  <script src="scripts/common.js"></script>
+  <script src="scripts/timer.js"></script>
+  <script src="scripts/radio.js"></script>
+  <script src="scripts/quotes.js"></script>
+  <script src="scripts/settings.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+</html>

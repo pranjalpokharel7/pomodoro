@@ -1,0 +1,23 @@
+@property --g1 { syntax: "<color>"; inherits: true; initial-value: #ffd9e4; }
+@property --g2 { syntax: "<color>"; inherits: true; initial-value: #ffe9d6; }
+
+:root {
+  --accent: #ff7fa3;
+  --g1: #ffd9e4;
+  --g2: #ffe9d6;
+  --ink: #5a4a52;
+  --soft: rgba(255, 255, 255, 0.55);
+  transition: --g1 0.6s, --g2 0.6s;
+}
+
+body[data-mode="short"] {
+  --accent: #5fcfa5;
+  --g1: #d2f5e6;
+  --g2: #d6ecff;
+}
+
+body[data-mode="long"] {
+  --accent: #7f9cff;
+  --g1: #dfe3ff;
+  --g2: #f1ddff;
+}
