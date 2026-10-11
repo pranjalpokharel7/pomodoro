@@ -16,7 +16,8 @@
 
 .round,
 .settings summary,
-.lb summary {
+.lb summary,
+.stats-card summary {
   list-style: none;
   width: 2.5rem;
   height: 2.5rem;

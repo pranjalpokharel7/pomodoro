@@ -33,7 +33,8 @@
   opacity: 0.6;
 }
 .bytask .chart-title,
-.daily + .chart-title { margin-top: 1rem; }
+.daily + .chart-title,
+.bytask + .chart-title { margin-top: 1rem; }
 
 /* Daily chart: vertical bars along a baseline, one per day. */
 .daily {
@@ -126,3 +127,6 @@
   opacity: 0.55;
   margin: 0;
 }
+
+/* Hide the "Recent sessions" title until there is a session. */
+.chart-title:has(+ .history:empty) { display: none; }
