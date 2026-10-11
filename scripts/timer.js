@@ -155,6 +155,7 @@ $('clear').onclick = () => {
   save();
   window.clearHistory?.(); // also wipe the session history and current task
   show();
+  window.sync?.(true); // push the wipe without merging the cloud copy back in
 };
 
 $('reset').onclick = () => {

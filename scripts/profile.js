@@ -150,10 +150,32 @@ function renderBoard(all) {
   });
 }
 
-// Push my score (including per-day buckets and a focus heartbeat), then show everyone's.
-async function sync() {
+// Other devices (e.g. the deployed site vs a local file) push too, so take the bigger of local and cloud instead of overwriting.
+function mergeCloud(c) {
+  total = Math.max(total, c?.total || 0);
+  sessions = Math.max(sessions, c?.sessions || 0);
+  for (const [k, t] of Object.entries(c?.days || {})) { // merge per-day buckets, max each
+    const l = days[k] || { ms: 0, n: 0 };
+    days[k] = { ms: Math.max(l.ms || 0, Number(t.ms) || 0), n: Math.max(l.n || 0, Number(t.n) || 0) };
+  }
+  for (const e of (Array.isArray(c?.tasks) ? c.tasks : [])) { // merge per-task totals, max each
+    if (!e || typeof e.label !== 'string') continue;
+    const l = taskTotals[e.label] || { ms: 0, n: 0 };
+    taskTotals[e.label] = { ms: Math.max(l.ms || 0, Number(e.ms) || 0), n: Math.max(l.n || 0, Number(e.n) || 0) };
+  }
+  saveTasks();
+  save();
+  show();
+  window.renderTags?.(); // merged per-task labels become selectable tags
+  window.renderStats?.();
+}
+
+// Pull and merge my cloud record, push my score (including per-day buckets and a focus heartbeat), then show everyone's.
+// overwrite: skip the merge, so 🗑️ clear really wipes the cloud copy.
+async function sync(overwrite) {
   if (!auth) return clearBoard();
   try {
+    if (overwrite !== true) mergeCloud(await get(`/${auth.uid}`));
     await fetch(await url(`/${auth.uid}`), {
       method: 'PUT',
       body: JSON.stringify({
@@ -192,26 +214,6 @@ $('gate').onsubmit = async e => {
   }
   setAuth(d.localId, name, d.idToken, d.refreshToken, +d.expiresIn);
 
-  try {
-    // New device starts at 0, so take the bigger of local and cloud instead of overwriting.
-    const c = await get(`/${auth.uid}`);
-    total = Math.max(total, c?.total || 0);
-    sessions = Math.max(sessions, c?.sessions || 0);
-    for (const [k, t] of Object.entries(c?.days || {})) { // merge per-day buckets, max each
-      const l = days[k] || { ms: 0, n: 0 };
-      days[k] = { ms: Math.max(l.ms || 0, Number(t.ms) || 0), n: Math.max(l.n || 0, Number(t.n) || 0) };
-    }
-    for (const e of (Array.isArray(c?.tasks) ? c.tasks : [])) { // merge per-task totals, max each
-      if (!e || typeof e.label !== 'string') continue;
-      const l = taskTotals[e.label] || { ms: 0, n: 0 };
-      taskTotals[e.label] = { ms: Math.max(l.ms || 0, Number(e.ms) || 0), n: Math.max(l.n || 0, Number(e.n) || 0) };
-    }
-    saveTasks();
-  } catch { /* offline: sync() will push what we have */ }
-  save();
-  show();
-  window.renderTags?.(); // merged per-task labels become selectable tags
-  window.renderStats?.();
   sync();
 };
 
