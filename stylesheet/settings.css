@@ -115,6 +115,7 @@ body.locked .quote { display: none; }
 }
 
 .settings input {
+  box-sizing: border-box;
   width: 3.5rem;
   font: inherit;
   padding: 0.25rem;
@@ -124,3 +125,35 @@ body.locked .quote { display: none; }
   background: rgba(255, 255, 255, 0.8);
   color: var(--ink);
 }
+
+.theme-swatches {
+  display: flex;
+  gap: 0.45rem;
+  justify-content: center;
+  padding: 0.5rem 0 0.15rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: 0.3rem;
+}
+
+.theme-swatch {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  padding: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(200, 190, 210, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  outline: 2.5px solid transparent;
+  outline-offset: 2px;
+  transition: transform 0.15s, outline-color 0.15s, box-shadow 0.15s;
+}
+
+.theme-swatch:hover { transform: scale(1.12); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22); }
+.theme-swatch[data-selected] { outline-color: var(--accent); box-shadow: 0 0 0 1px white, 0 2px 8px rgba(0,0,0,0.2); }
+
+.theme-swatch[data-theme="cozy"]      { background-image: url("../bg.jpg"); }
+
+.theme-swatch[data-theme="forest"]    { background-image: url("../bg-forest.jpg"); }
+.theme-swatch[data-theme="academia"]  { background-image: url("../bg-academia.jpg"); }
+.theme-swatch[data-theme="fireplace"] { background-image: url("../bg-fireplace.jpg"); }

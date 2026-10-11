@@ -73,6 +73,7 @@ function stop() {
   clearInterval(timer);
   timer = null;
   endAt = null;
+  localStorage.removeItem('pomo-running');
   $('toggle').textContent = 'Start';
   applyVolume(); // back to full volume when paused or reset
   window.sync?.(); // clear this device's "focusing now" dot on the leaderboard
@@ -83,6 +84,7 @@ function start() {
   audio = audio || new (window.AudioContext || window.webkitAudioContext)();
   audio.resume();
   endAt = Date.now() + remaining;
+  localStorage.setItem('pomo-running', JSON.stringify({ endAt, mode }));
   lastTick = Date.now();
   timer = setInterval(tick, 250);
   $('toggle').textContent = 'Pause';
@@ -124,6 +126,7 @@ function finish() {
 }
 
 function beep() {
+  if (!audio) return; // no AudioContext yet if timer was restored after a refresh without a click
   // Three soft chimes, scheduled on the audio clock.
   // C-E-G arpeggio, sine waves with a long soft fade.
   [523, 659, 784].forEach((freq, i) => {

@@ -67,6 +67,7 @@ function renderTags(sel) {
   updateTaskBorder();
 }
 window.renderTags = renderTags; // profile.js calls this after a sign-in merge brings in new tags
+window.renderHistory = renderHistory; // stats.js calls this to restore own history when user picker resets
 window.getSessionLog = () => sessionLog; // stats.js reads this to build per-day tag breakdowns
 
 // Record a finished focus session. Called by finish() in scripts/timer.js.
@@ -99,7 +100,7 @@ function clearHistory() {
 }
 
 function renderHistory() {
-  $('history').replaceChildren(...sessionLog.map(e => {
+  $('history').replaceChildren(...sessionLog.slice(0, 5).map(e => {
     const row = document.createElement('div');
     row.className = 'hrow';
     const label = document.createElement('span');

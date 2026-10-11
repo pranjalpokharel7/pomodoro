@@ -1,3 +1,11 @@
+/* Per-theme background image. Set on body so the inline theme-restore script (index.html)
+   can apply data-theme before first paint and avoid a flash. */
+body                          { --bg-img: url("../bg.jpg"); }
+
+body[data-theme="forest"]    { --bg-img: url("../bg-forest.jpg"); }
+body[data-theme="academia"]  { --bg-img: url("../bg-academia.jpg"); }
+body[data-theme="fireplace"] { --bg-img: url("../bg-fireplace.jpg"); }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -9,7 +17,7 @@ body {
   /* Mode-coloured wash over the photo, so each mode still feels different. */
   background:
     linear-gradient(135deg, color-mix(in srgb, var(--g1) 55%, transparent), color-mix(in srgb, var(--g2) 55%, transparent)),
-    url("../bg.jpg") center / cover fixed,
+    var(--bg-img) center / cover fixed,
     var(--g1);
   color: var(--ink);
   font-family: "Quicksand", "Nunito", system-ui, sans-serif;

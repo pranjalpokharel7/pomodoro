@@ -21,3 +21,10 @@ body[data-mode="long"] {
   --g1: #dfe3ff;
   --g2: #f1ddff;
 }
+
+/* Theme blob colors — declared after mode rules so themes win on non-cozy themes.
+   Cozy has no override: it keeps the original mode-responsive blobs. */
+
+body[data-theme="forest"]    { --g1: #c8dcc0; --g2: #d4e8c4; }
+body[data-theme="academia"]  { --g1: #e8d8b8; --g2: #d8c898; }
+body[data-theme="fireplace"] { --g1: #f0d4b0; --g2: #e8b880; }

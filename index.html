@@ -6,17 +6,18 @@
   <title>Pomodoro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="stylesheet/theme.css?v=15">
-  <link rel="stylesheet" href="stylesheet/base.css?v=15">
+  <link rel="stylesheet" href="stylesheet/theme.css?v=18">
+  <link rel="stylesheet" href="stylesheet/base.css?v=18">
   <link rel="stylesheet" href="stylesheet/buttons.css?v=15">
-  <link rel="stylesheet" href="stylesheet/stats.css?v=15">
-  <link rel="stylesheet" href="stylesheet/charts.css?v=16">
+  <link rel="stylesheet" href="stylesheet/stats.css?v=19">
+  <link rel="stylesheet" href="stylesheet/charts.css?v=20">
   <link rel="stylesheet" href="stylesheet/timer.css?v=16">
-  <link rel="stylesheet" href="stylesheet/radio.css?v=15">
-  <link rel="stylesheet" href="stylesheet/settings.css?v=15">
+  <link rel="stylesheet" href="stylesheet/radio.css?v=20">
+  <link rel="stylesheet" href="stylesheet/settings.css?v=20">
   <link rel="stylesheet" href="stylesheet/quotes.css?v=15">
 </head>
 <body data-mode="focus" class="locked">
+  <script>(function(){var t=localStorage.getItem('pomo-theme');if(t&&t!=='cozy')document.body.dataset.theme=t;})();</script>
   <form id="gate" class="gate">
     <input type="email" id="email" placeholder="Email" aria-label="Email" autocomplete="username" required>
     <input type="password" id="pw" placeholder="Password" aria-label="Password" autocomplete="current-password" required>
@@ -31,6 +32,12 @@
         <label>Focus <input type="number" id="focusMin" min="1" max="180" value="25"> min</label>
         <label>Short break <input type="number" id="shortMin" min="1" max="60" value="5"> min</label>
         <label>Long break <input type="number" id="longMin" min="1" max="120" value="15"> min</label>
+        <div class="theme-swatches">
+          <button class="theme-swatch" data-theme="cozy" title="Cozy"></button>
+          <button class="theme-swatch" data-theme="forest" title="Forest"></button>
+          <button class="theme-swatch" data-theme="academia" title="Dark Academia"></button>
+          <button class="theme-swatch" data-theme="fireplace" title="Fireplace"></button>
+        </div>
       </div>
     </details>
   </div>
@@ -52,6 +59,9 @@
   <details id="stats" class="stats-card">
     <summary title="Stats" aria-label="Stats"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></summary>
     <div class="panel">
+      <select id="stats-user" class="stats-user-pick">
+        <option value="">My stats</option>
+      </select>
       <p class="chart-title">Focus time</p>
       <div id="statstabs" class="lbtabs">
         <button data-srange="7">7 days</button>
@@ -131,13 +141,13 @@
   </main>
   <p id="quote" class="quote" role="status" aria-live="polite"></p>
   <script src="scripts/common.js?v=15"></script>
-  <script src="scripts/timer.js?v=15"></script>
-  <script src="scripts/tasks.js?v=16"></script>
+  <script src="scripts/timer.js?v=21"></script>
+  <script src="scripts/tasks.js?v=20"></script>
   <script src="scripts/radio.js?v=15"></script>
   <script src="scripts/quotes.js?v=15"></script>
-  <script src="scripts/settings.js?v=15"></script>
-  <script src="scripts/profile.js?v=15"></script>
-  <script src="scripts/stats.js?v=16"></script>
-  <script src="scripts/main.js?v=15"></script>
+  <script src="scripts/settings.js?v=18"></script>
+  <script src="scripts/profile.js?v=21"></script>
+  <script src="scripts/stats.js?v=21"></script>
+  <script src="scripts/main.js?v=21"></script>
 </body>
 </html>

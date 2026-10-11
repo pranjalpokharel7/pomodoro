@@ -10,6 +10,8 @@ const REFRESH = `https://securetoken.googleapis.com/v1/token?key=${KEY}`;
 let auth = null; // { uid, name, id (ID token), refresh, exp (ms) }
 try { auth = JSON.parse(localStorage.getItem('pomo-auth')); } catch {}
 if (!auth?.uid) auth = null;
+window.getAuthUid = () => auth?.uid;
+window.getLastAll = () => lastAll;
 $('email').value = localStorage.getItem('pomo-email') || '';
 
 const postJson = (u, body) => fetch(u, {
@@ -233,6 +235,12 @@ $('signout').onclick = async () => {
 
 sync();
 setInterval(sync, 30000);
+
+// Persist leaderboard open state across refreshes.
+$('lb').addEventListener('toggle', () => {
+  localStorage.setItem('pomo-lb-open', $('lb').open ? '1' : '');
+});
+if (localStorage.getItem('pomo-lb-open')) $('lb').open = true;
 
 // Range tabs: re-sort the board by Today / Week / All-time, remembering the choice.
 document.querySelectorAll('#lbtabs button').forEach(b => {
