@@ -1,6 +1,6 @@
 // Per-session task label + a local history of completed focus sessions.
 // The current task is also pushed to the leaderboard (see scripts/profile.js) so others can see
-// what you're focusing on. History stays on this device only.
+// what you're focusing on. History is synced to the cloud too (see mergeCloud in scripts/profile.js).
 const LOG_KEPT = 20; // most recent completed sessions to keep
 
 let sessionLog = [];

@@ -163,6 +163,13 @@ function mergeCloud(c) {
     const l = taskTotals[e.label] || { ms: 0, n: 0 };
     taskTotals[e.label] = { ms: Math.max(l.ms || 0, Number(e.ms) || 0), n: Math.max(l.n || 0, Number(e.n) || 0) };
   }
+  const seen = new Set(sessionLog.map(e => e.at)); // union session history by timestamp, newest first
+  for (const e of (Array.isArray(c?.log) ? c.log : [])) {
+    if (e && typeof e.label === 'string' && Number(e.at) && !seen.has(e.at)) sessionLog.push({ label: e.label, ms: Number(e.ms) || 0, at: e.at });
+  }
+  sessionLog = sessionLog.sort((a, b) => b.at - a.at).slice(0, LOG_KEPT);
+  localStorage.setItem('pomo-log', JSON.stringify(sessionLog));
+  renderHistory();
   saveTasks();
   save();
   show();
@@ -185,6 +192,7 @@ async function sync(overwrite) {
         days: Object.fromEntries(Object.entries(days).map(([k, t]) => [k, { ms: Math.floor(t.ms) || 0, n: Math.floor(t.n) || 0 }])),
         // Per-task totals as an array, since RTDB keys can't hold free-text labels (scripts/tasks.js).
         tasks: Object.entries(taskTotals).map(([label, t]) => ({ label, ms: Math.floor(t.ms) || 0, n: Math.floor(t.n) || 0 })),
+        log: sessionLog.map(e => ({ label: e.label, ms: Math.floor(e.ms) || 0, at: e.at })),
         active: timer && mode === 'focus' ? Date.now() : 0,
         task: timer && mode === 'focus' ? taskText() : '', // shared current task, only while focusing
       }),
