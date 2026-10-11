@@ -161,6 +161,8 @@ async function sync() {
         total: Math.floor(total),
         sessions,
         days: Object.fromEntries(Object.entries(days).map(([k, t]) => [k, { ms: Math.floor(t.ms) || 0, n: Math.floor(t.n) || 0 }])),
+        // Per-task totals as an array, since RTDB keys can't hold free-text labels (scripts/tasks.js).
+        tasks: Object.entries(taskTotals).map(([label, t]) => ({ label, ms: Math.floor(t.ms) || 0, n: Math.floor(t.n) || 0 })),
         active: timer && mode === 'focus' ? Date.now() : 0,
         task: timer && mode === 'focus' ? taskText() : '', // shared current task, only while focusing
       }),
@@ -199,9 +201,17 @@ $('gate').onsubmit = async e => {
       const l = days[k] || { ms: 0, n: 0 };
       days[k] = { ms: Math.max(l.ms || 0, Number(t.ms) || 0), n: Math.max(l.n || 0, Number(t.n) || 0) };
     }
+    for (const e of (Array.isArray(c?.tasks) ? c.tasks : [])) { // merge per-task totals, max each
+      if (!e || typeof e.label !== 'string') continue;
+      const l = taskTotals[e.label] || { ms: 0, n: 0 };
+      taskTotals[e.label] = { ms: Math.max(l.ms || 0, Number(e.ms) || 0), n: Math.max(l.n || 0, Number(e.n) || 0) };
+    }
+    saveTasks();
   } catch { /* offline: sync() will push what we have */ }
   save();
   show();
+  window.renderTags?.(); // merged per-task labels become selectable tags
+  window.renderStats?.();
   sync();
 };
 

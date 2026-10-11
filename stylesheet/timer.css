@@ -54,27 +54,33 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Current-task label, a soft pill under the ring. */
+/* Current-task tag picker, a soft pill dropdown under the ring. */
 .task {
   display: block;
   width: 100%;
   max-width: 18rem;
   box-sizing: border-box;
   margin: 0 auto 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.6rem; /* room for the chevron on the right */
   font: inherit;
   text-align: center;
+  text-align-last: center; /* centre the selected value in the closed select */
   color: var(--ink);
   background: rgba(255, 255, 255, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 999px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  /* a soft chevron, drawn inline so it works offline (no icon font / network) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%23715c67' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
 }
-
-.task::placeholder { opacity: 0.55; }
 
 .task:focus {
   outline: none;
-  background: rgba(255, 255, 255, 0.82);
+  background-color: rgba(255, 255, 255, 0.82);
 }
 
 .controls {
