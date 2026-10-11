@@ -112,9 +112,20 @@
 }
 
 .hlabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.hdot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .htime { flex: none; }

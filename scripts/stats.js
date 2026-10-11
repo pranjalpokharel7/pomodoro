@@ -16,7 +16,19 @@ const el = (tag, cls, text) => {
 };
 const empty = (msg) => el('p', 'chart-empty', msg);
 
+// Build a { dateKey → { label: ms } } map from the session log for stacked bars.
+function buildDayTagMap() {
+  const map = {};
+  for (const s of (window.getSessionLog?.() || [])) {
+    const dk = dayKey(s.at);
+    if (!map[dk]) map[dk] = {};
+    map[dk][s.label] = (map[dk][s.label] || 0) + s.ms;
+  }
+  return map;
+}
+
 // Vertical bars, oldest day on the left through today on the right. dayKey/hm from scripts/timer.js.
+// Each bar is stacked with coloured segments per tag when session-log data is available.
 function renderDaily() {
   const box = $('daily');
   const n = statsRange === '30' ? 30 : 7;
@@ -28,13 +40,32 @@ function renderDaily() {
   const max = Math.max(...cols.map(c => c.ms));
   if (max === 0) return box.replaceChildren(empty('No focus time yet.'));
 
+  const dayTagMap = buildDayTagMap();
+
   box.replaceChildren(...cols.map(c => {
     const col = el('div', c.now ? 'col now' : 'col');
     col.title = `${dayKey(c.t)} · ${hm(c.ms)}`;
     const bar = el('div', 'bar');
     bar.style.height = `${(c.ms / max) * 100}%`;
+
+    const breakdown = dayTagMap[dayKey(c.t)];
+    if (breakdown) {
+      for (const [label, ms] of Object.entries(breakdown).sort((a, b) => b[1] - a[1])) {
+        const seg = el('div', 'seg');
+        seg.style.height = `${(ms / c.ms) * 100}%`;
+        seg.style.background = window.tagColor?.(label) || 'var(--accent)';
+        bar.append(seg);
+      }
+    } else {
+      // Day predates the session log — fall back to a plain accent segment.
+      const seg = el('div', 'seg');
+      seg.style.height = '100%';
+      seg.style.background = c.now ? 'var(--accent)' : 'color-mix(in srgb, var(--accent) 55%, transparent)';
+      bar.append(seg);
+    }
+
     col.append(bar);
-    if (n <= 7) col.append(el('span', 'lbl', WEEKDAY[new Date(c.t).getDay()])); // 30 bars are too tight to label
+    if (n <= 7) col.append(el('span', 'lbl', WEEKDAY[new Date(c.t).getDay()]));
     return col;
   }));
 }
@@ -60,6 +91,7 @@ function renderTasks() {
     const track = el('div', 'track');
     const fill = el('div', 'fill');
     fill.style.width = `${(r.ms / max) * 100}%`;
+    if (!r.other) fill.style.background = window.tagColor?.(r.label) || '';
     track.append(fill);
     row.append(head, track);
     return row;

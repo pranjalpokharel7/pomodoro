@@ -1,3 +1,26 @@
+// Pastel palette for tag colours — avoids the three accent hues
+// (focus pink #ff7fa3, short-break teal #5fcfa5, long-break blue #7f9cff).
+const TAG_COLORS = [
+  '#f4a96a', // peach
+  '#b39ddb', // soft purple
+  '#f7c96e', // butter yellow
+  '#ef9a9a', // dusty rose
+  '#a5d6a7', // soft sage
+  '#80cbc4', // muted aqua
+  '#ce93d8', // lilac
+  '#ffcc80', // warm apricot
+  '#90caf9', // powder blue
+  '#f48fb1', // blush
+];
+
+function tagColor(label) {
+  if (!label) return null;
+  let h = 0;
+  for (const c of label) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
+  return TAG_COLORS[h % TAG_COLORS.length];
+}
+window.tagColor = tagColor;
+
 // Per-session task label + a local history of completed focus sessions.
 // The current task is also pushed to the leaderboard (see scripts/profile.js) so others can see
 // what you're focusing on. History is synced to the cloud too (see mergeCloud in scripts/profile.js).
@@ -26,6 +49,10 @@ const taskText = () => $('task').value.trim().slice(0, 60);
 
 // Rebuild the dropdown: a blank "no tag" option, every known tag (sorted), then "➕ New tag…".
 // `sel` is the tag to leave selected; defaults to the current pick, falling back to pomo-task.
+function updateTaskBorder() {
+  $('task').style.borderColor = tagColor(taskText()) || '';
+}
+
 function renderTags(sel) {
   const cur = sel ?? ($('task').value || localStorage.getItem('pomo-task') || '');
   const names = new Set([...tags, ...Object.keys(taskTotals)].filter(Boolean));
@@ -37,8 +64,10 @@ function renderTags(sel) {
   opts.push(new Option('➕ New tag…', NEW_TAG));
   $('task').replaceChildren(...opts);
   $('task').value = cur;
+  updateTaskBorder();
 }
 window.renderTags = renderTags; // profile.js calls this after a sign-in merge brings in new tags
+window.getSessionLog = () => sessionLog; // stats.js reads this to build per-day tag breakdowns
 
 // Record a finished focus session. Called by finish() in scripts/timer.js.
 function logFocus(ms) {
@@ -75,7 +104,14 @@ function renderHistory() {
     row.className = 'hrow';
     const label = document.createElement('span');
     label.className = 'hlabel';
-    label.textContent = e.label;
+    const color = tagColor(e.label);
+    if (color) {
+      const dot = document.createElement('span');
+      dot.className = 'hdot';
+      dot.style.background = color;
+      label.append(dot);
+    }
+    label.append(document.createTextNode(e.label));
     const time = document.createElement('span');
     time.className = 'htime';
     time.textContent = hm(e.ms); // compact "25m" / "1h 5m", from scripts/timer.js
@@ -98,6 +134,7 @@ $('task').onchange = () => {
     return;
   }
   localStorage.setItem('pomo-task', v);
+  updateTaskBorder();
   window.sync?.();
 };
 
