@@ -15,7 +15,8 @@
 }
 
 .round,
-.settings summary {
+.settings summary,
+.lb summary {
   list-style: none;
   width: 2.5rem;
   height: 2.5rem;
@@ -75,7 +76,6 @@ body.locked .gate {
 body.locked main,
 body.locked .corner,
 body.locked .signout,
-body.locked .boardbtn,
 body.locked .lb,
 body.locked .quote { display: none; }
 

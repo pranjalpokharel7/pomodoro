@@ -10,6 +10,11 @@ let timer = null;
 let audio = null;
 let total = Number(localStorage.getItem('pomo-total')) || 0; // ms of focus time
 let sessions = Number(localStorage.getItem('pomo-sessions')) || 0;
+// Per-day focus, { "YYYY-MM-DD": { ms, n } }, kept to the last 30 days. Powers the leaderboard's
+// Today/Week ranges and streaks. The leaderboard reads this; see scripts/profile.js.
+let days = {};
+try { days = JSON.parse(localStorage.getItem('pomo-days')) || {}; } catch {}
+const DAYS_KEPT = 30;
 
 const duration = m => Math.max(1, Number(inputs[m].value) || 1) * 60000;
 
@@ -22,18 +27,37 @@ const hms = ms => {
   const s = Math.floor(ms / 1000);
   return `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`;
 };
+// Compact duration for the leaderboard: "2h 15m", or "15m" under an hour.
+const hm = ms => {
+  const m = Math.floor(ms / 60000);
+  return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`;
+};
+
+// Local-time date key, driven by Date.now() so the Date.now override used in testing works.
+const dayKey = (t = Date.now()) => {
+  const d = new Date(t);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+const today = () => (days[dayKey()] ||= { ms: 0, n: 0 });
+function pruneDays() {
+  const keep = new Set();
+  for (let i = 0; i < DAYS_KEPT; i++) keep.add(dayKey(Date.now() - i * 86400000));
+  for (const k of Object.keys(days)) if (!keep.has(k)) delete days[k];
+}
 
 function show() {
   $('time').textContent = clock(remaining);
   $('ring').style.strokeDashoffset = CIRC * (1 - remaining / duration(mode));
-  $('total').textContent = hms(total);
-  $('sessions').textContent = sessions;
+  $('total').textContent = hms(days[dayKey()]?.ms || 0); // the card shows today, not all-time
+  $('sessions').textContent = days[dayKey()]?.n || 0;
   document.title = timer ? `${clock(remaining)} · ${TITLES[mode]}` : 'Pomodoro';
 }
 
 function save() {
   localStorage.setItem('pomo-total', total);
   localStorage.setItem('pomo-sessions', sessions);
+  pruneDays();
+  localStorage.setItem('pomo-days', JSON.stringify(days));
 }
 
 function setMode(m) {
@@ -51,6 +75,7 @@ function stop() {
   endAt = null;
   $('toggle').textContent = 'Start';
   applyVolume(); // back to full volume when paused or reset
+  window.sync?.(); // clear this device's "focusing now" dot on the leaderboard
 }
 
 function start() {
@@ -62,6 +87,7 @@ function start() {
   timer = setInterval(tick, 250);
   $('toggle').textContent = 'Pause';
   show();
+  window.sync?.(); // light up this device's "focusing now" dot without waiting for the 30s sync
 }
 
 function pause() {
@@ -72,7 +98,7 @@ function pause() {
 
 function tick() {
   const now = Date.now();
-  if (mode === 'focus') total += now - lastTick;
+  if (mode === 'focus') { total += now - lastTick; today().ms += now - lastTick; }
   lastTick = now;
   remaining = Math.max(0, endAt - now);
   if (remaining === 0) return finish();
@@ -87,7 +113,9 @@ function finish() {
   duckForChime();
   if (mode === 'focus') {
     sessions++;
+    today().n++;
     save();
+    window.logFocus?.(duration('focus')); // record this session in the history log (see scripts/tasks.js)
     setMode(sessions % 4 === 0 ? 'long' : 'short');
   } else {
     setMode('focus');
@@ -120,10 +148,12 @@ $('skip').onclick = () => {
 };
 
 $('clear').onclick = () => {
-  if (!confirm('Clear total studied time and sessions?')) return;
+  if (!confirm('Clear all your stats and session history?')) return;
   total = 0;
   sessions = 0;
+  days = {};
   save();
+  window.clearHistory?.(); // also wipe the session history and current task
   show();
 };
 

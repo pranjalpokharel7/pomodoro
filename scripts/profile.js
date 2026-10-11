@@ -38,9 +38,11 @@ const signOut = () => {
   stop();
   radioStop(PLAY, 'Play lofi');
   total = sessions = 0;
+  days = {};
   save();
+  window.clearHistory?.(); // next person on this device starts with a clean task + history
   setMode('focus');
-  $('board').replaceChildren();
+  clearBoard();
   applyAuth();
 };
 
@@ -61,26 +63,112 @@ async function token() {
 const url = async path => `${DB}${path}.json?auth=${await token()}`;
 const get = async path => (await fetch(await url(path))).json();
 
-// Push my score, then show everyone's. Signed out: show nothing.
+// Leaderboard range: 'today' | 'week' | 'all'. Ranks everyone by the selected range's time.
+let range = localStorage.getItem('pomo-lbrange') || 'all';
+let lastAll = {}; // last fetched records, so switching tabs re-renders without a round trip
+const rows = new Map(); // uid -> { el, ms } stable row elements, for FLIP reordering
+const MEDALS = ['🥇', '🥈', '🥉'];
+const PRESENT_MS = 75000; // a focus heartbeat newer than this shows the "focusing now" dot
+
+const dayAgo = i => dayKey(Date.now() - i * 86400000); // dayKey/hm come from scripts/timer.js
+
+// { ms, n } for one record in the active range. All-time uses the lifetime fields so it stays
+// accurate past the 30-day window; Today/Week sum the per-day buckets.
+function metric(v) {
+  const d = v.days || {};
+  if (range === 'all') return { ms: Number(v.total) || 0, n: Number(v.sessions) || 0 };
+  if (range === 'today') { const t = d[dayKey()] || {}; return { ms: Number(t.ms) || 0, n: Number(t.n) || 0 }; }
+  let ms = 0, n = 0;
+  for (let i = 0; i < 7; i++) { const t = d[dayAgo(i)]; if (t) { ms += Number(t.ms) || 0; n += Number(t.n) || 0; } }
+  return { ms, n };
+}
+
+// Consecutive days with focus time, ending today (or yesterday if today is still empty).
+function streak(v) {
+  const d = v.days || {};
+  let i = 0;
+  if (!(d[dayKey()]?.ms > 0)) { if (d[dayAgo(1)]?.ms > 0) i = 1; else return 0; }
+  let s = 0;
+  while (d[dayAgo(i)]?.ms > 0) { s++; i++; }
+  return s;
+}
+
+const makeRow = () => {
+  const el = document.createElement('div');
+  el.className = 'entry';
+  el.innerHTML = '<div class="who"><span class="rank"></span><span class="nm"></span><span class="dot"></span></div><div class="meta"></div><div class="doing"></div>';
+  return el;
+};
+function fillRow(el, x, i) {
+  el.classList.toggle('on', x.uid === auth?.uid);
+  el.classList.toggle('live', x.live);
+  el.querySelector('.rank').textContent = MEDALS[i] || `${i + 1}.`;
+  el.querySelector('.nm').textContent = x.v.name;
+  el.querySelector('.meta').textContent = `${hm(x.m.ms)} · 🔥 ${x.st}`;
+  const doing = el.querySelector('.doing'); // what they're focusing on, only while live
+  const task = x.live && x.v.task ? String(x.v.task) : '';
+  doing.textContent = task;
+  doing.style.display = task ? '' : 'none';
+}
+
+const clearBoard = () => { $('board').replaceChildren(); rows.clear(); };
+
+// Render everyone, ranked by the active range, animating any rank changes with FLIP.
+function renderBoard(all) {
+  const board = $('board');
+  const list = Object.entries(all)
+    .filter(([, v]) => typeof v?.name === 'string')
+    .map(([uid, v]) => ({ uid, v, m: metric(v), st: streak(v), live: Date.now() - (Number(v.active) || 0) < PRESENT_MS }))
+    .sort((a, b) => b.m.ms - a.m.ms || a.v.name.localeCompare(b.v.name));
+
+  const firstRects = new Map(); // FLIP: where each row sits before the reorder
+  for (const [uid, r] of rows) firstRects.set(uid, r.el.getBoundingClientRect());
+
+  const seen = new Set(list.map(x => x.uid));
+  for (const [uid, r] of rows) if (!seen.has(uid)) { r.el.remove(); rows.delete(uid); }
+
+  const bumped = [];
+  list.forEach((x, i) => {
+    let r = rows.get(x.uid);
+    if (!r) { r = { el: makeRow(), ms: x.m.ms }; rows.set(x.uid, r); }
+    fillRow(r.el, x, i);
+    if (x.m.ms > r.ms) { bumped.push(r.el); r.el.classList.remove('flash'); }
+    r.ms = x.m.ms;
+    board.appendChild(r.el); // appending in rank order reorders the DOM
+  });
+
+  const moves = [];
+  for (const [uid, r] of rows) {
+    const first = firstRects.get(uid);
+    if (!first) continue; // new row: no slide, just appears
+    const dy = first.top - r.el.getBoundingClientRect().top;
+    if (dy) { r.el.style.transition = 'none'; r.el.style.transform = `translateY(${dy}px)`; moves.push(r.el); }
+  }
+  requestAnimationFrame(() => {
+    for (const el of moves) { el.style.transition = 'transform 0.4s ease'; el.style.transform = ''; }
+    for (const el of bumped) el.classList.add('flash'); // flash rows whose time just ticked up
+  });
+}
+
+// Push my score (including per-day buckets and a focus heartbeat), then show everyone's.
 async function sync() {
-  if (!auth) return $('board').replaceChildren();
+  if (!auth) return clearBoard();
   try {
     await fetch(await url(`/${auth.uid}`), {
       method: 'PUT',
-      body: JSON.stringify({ name: auth.name, total: Math.floor(total), sessions }),
+      body: JSON.stringify({
+        name: auth.name,
+        total: Math.floor(total),
+        sessions,
+        days: Object.fromEntries(Object.entries(days).map(([k, t]) => [k, { ms: Math.floor(t.ms) || 0, n: Math.floor(t.n) || 0 }])),
+        active: timer && mode === 'focus' ? Date.now() : 0,
+        task: timer && mode === 'focus' ? taskText() : '', // shared current task, only while focusing
+      }),
     });
-    const all = (await get('')) || {};
-    $('board').replaceChildren(...Object.entries(all)
-      .filter(([, v]) => typeof v?.name === 'string')
-      .sort(([, a], [, b]) => (Number(b.total) || 0) - (Number(a.total) || 0) || a.name.localeCompare(b.name))
-      .map(([uid, v], i) => {
-        const s = document.createElement('span');
-        s.textContent = `${i + 1}. ${v.name} ${hms(Number(v.total) || 0)}`;
-        s.className = uid === auth?.uid ? 'on' : '';
-        return s;
-      }));
+    lastAll = (await get('')) || {};
+    renderBoard(lastAll);
   } catch {
-    if (!auth) $('board').replaceChildren();
+    if (!auth) clearBoard();
   }
 }
 
@@ -107,6 +195,10 @@ $('gate').onsubmit = async e => {
     const c = await get(`/${auth.uid}`);
     total = Math.max(total, c?.total || 0);
     sessions = Math.max(sessions, c?.sessions || 0);
+    for (const [k, t] of Object.entries(c?.days || {})) { // merge per-day buckets, max each
+      const l = days[k] || { ms: 0, n: 0 };
+      days[k] = { ms: Math.max(l.ms || 0, Number(t.ms) || 0), n: Math.max(l.n || 0, Number(t.n) || 0) };
+    }
   } catch { /* offline: sync() will push what we have */ }
   save();
   show();
@@ -122,4 +214,13 @@ $('signout').onclick = async () => {
 sync();
 setInterval(sync, 30000);
 
-$('boardclose').onclick = $('boardbtn').onclick = () => $('lb').classList.toggle('shut');
+// Range tabs: re-sort the board by Today / Week / All-time, remembering the choice.
+document.querySelectorAll('#lbtabs button').forEach(b => {
+  b.classList.toggle('active', b.dataset.range === range);
+  b.onclick = () => {
+    range = b.dataset.range;
+    localStorage.setItem('pomo-lbrange', range);
+    document.querySelectorAll('#lbtabs button').forEach(x => x.classList.toggle('active', x === b));
+    renderBoard(lastAll);
+  };
+});

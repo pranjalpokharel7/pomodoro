@@ -16,7 +16,8 @@ Object.keys(inputs).forEach(m => {
   };
 });
 
-// Close the settings panel when clicking elsewhere.
+// Close the settings panel when clicking elsewhere. The leaderboard stays put — it only
+// collapses when its own trophy icon is clicked.
 document.addEventListener('click', e => {
   document.querySelectorAll('.settings').forEach(d => {
     if (!d.contains(e.target)) d.open = false;

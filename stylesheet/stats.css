@@ -20,76 +20,144 @@
   margin: 0.1rem 0 0.9rem;
 }
 
-/* Leaderboard card, top-left: trophy + close button on top, scores below. */
+/* Leaderboard, top-left: a round trophy that opens a panel below it, like the ⚙️/✨ icons. */
 .lb {
   position: fixed;
   left: 1rem;
   top: 1rem;
   z-index: 2;
-  min-width: 12rem;
-  padding: 0.8rem 1.2rem 1rem;
   font-variant-numeric: tabular-nums;
-  background: rgba(255, 255, 255, 0.6);
+}
+
+.lb summary::-webkit-details-marker { display: none; }
+
+.lb .panel {
+  position: absolute;
+  top: 3.2rem;
+  left: 0;
+  min-width: 12rem;
+  max-width: min(18rem, 86vw);
+  padding: 0.8rem 1.2rem 1rem;
+  background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 1.5rem;
+  border-radius: 1.2rem;
   box-shadow: 0 20px 60px rgba(120, 80, 100, 0.15);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
-.lb:has(.board:empty),
-.lb.shut { display: none; }
-
-.lb header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.6rem;
-  opacity: 0.7;
-}
-
 .board {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.45rem;
   margin: 0;
   font-size: 1rem;
 }
 
-/* Close button blends into the card: no pill, no shadow. */
-.lb header button {
+/* Today / Week / All range tabs, above the board. */
+.lbtabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.lbtabs button {
+  border: 0;
+  padding: 0.12rem 0.5rem;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: inherit;
   background: none;
   box-shadow: none;
   transform: none;
+  border-radius: 0.7rem;
+  opacity: 0.5;
+  cursor: pointer;
 }
 
-/* Trophy button, top-left, only while the card is closed. */
-.boardbtn {
-  position: fixed;
-  left: 1rem;
-  top: 1rem;
-  z-index: 2;
-}
-
-.lb:not(.shut) ~ .boardbtn { display: none; }
-
-/* Narrow screens: no room at the side, so show it as a card above the main card. */
-@media (max-width: 900px) {
-  .lb {
-    position: static;
-    margin: 0.5rem auto;
-    width: min(320px, 92vw);
-    box-sizing: border-box;
-  }
-}
-
-.board .on {
+.lbtabs button.active {
+  opacity: 1;
   font-weight: 700;
+  background: rgba(255, 255, 255, 0.6);
 }
 
-.board .on::before {
-  content: '● ';
+/* One entry: name line on top, "time · sessions · streak" beneath. */
+.board .entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  will-change: transform;
+  border-radius: 0.6rem;
+}
+
+.board .who {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.board .rank {
+  min-width: 1.4rem;
+}
+
+.board .nm {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 8rem;
+}
+
+.board .meta {
+  margin-left: 1.75rem;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* What a live user is focusing on, shown only while they're in a focus session. */
+.board .doing {
+  margin-left: 1.75rem;
+  font-size: 0.78rem;
+  font-style: italic;
+  opacity: 0.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12rem;
+}
+
+/* "Focusing now" dot: hidden unless the entry is live. */
+.board .dot { display: none; }
+
+.board .entry.live .dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #35c759;
+  animation: pulse 1.8s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(53, 199, 89, 0.5); }
+  70% { box-shadow: 0 0 0 0.4rem rgba(53, 199, 89, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(53, 199, 89, 0); }
+}
+
+/* Brief glow when a row's time ticks up. */
+.board .entry.flash { animation: flash 1.2s ease-out; }
+
+@keyframes flash {
+  0% { background: rgba(255, 214, 120, 0.65); }
+  100% { background: transparent; }
+}
+
+/* Your own row, highlighted in the accent colour. */
+.board .entry.on .nm {
   color: var(--accent);
+  font-weight: 700;
 }
 
 .total h2 {
