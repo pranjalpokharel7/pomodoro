@@ -1,10 +1,10 @@
 /* Per-theme background image. Set on body so the inline theme-restore script (index.html)
    can apply data-theme before first paint and avoid a flash. */
-body                          { --bg-img: url("../bg.jpg"); }
+body                          { --bg-img: url("../static/bg.jpg"); }
 
-body[data-theme="forest"]    { --bg-img: url("../bg-forest.jpg"); }
-body[data-theme="academia"]  { --bg-img: url("../bg-academia.jpg"); }
-body[data-theme="fireplace"] { --bg-img: url("../bg-fireplace.jpg"); }
+body[data-theme="forest"]    { --bg-img: url("../static/bg-forest.jpg"); }
+body[data-theme="academia"]  { --bg-img: url("../static/bg-academia.jpg"); }
+body[data-theme="fireplace"] { --bg-img: url("../static/bg-fireplace.jpg"); }
 
 body {
   margin: 0;

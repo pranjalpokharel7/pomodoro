@@ -8,7 +8,7 @@ A cute, minimal static pomodoro timer. No build step, no dependencies, no framew
 - Always keep the script and stylesheet load order in `index.html`, since scripts share globals. [Files]
 - Never bind the mode tabs with `[data-mode]`: `<body>` has it too and every click would reset the timer. [Gotchas]
 - Never put `overflow: hidden` on `body`, the card can be taller than short screens. [Gotchas]
-- CSS paths are relative to the CSS file, so the background is `../bg.jpg`. [Files]
+- CSS paths are relative to the CSS file, so the background is `../static/bg.jpg`. [Files]
 - Keep `stationUrl()` in `scripts/radio.js` and the URL pattern in `tools/stations.py` identical. [Adding SomaFM stations]
 - Never play audio before a user click: Start and Play lofi are those clicks. [Gotchas]
 
@@ -44,7 +44,7 @@ Styles, in load order:
 
 Other:
 
-- `bg.jpg`: cozy lamp-corner photo by Claire on Unsplash (Unsplash License, no credit needed). Stored locally so it works offline.
+- `static/bg.jpg` (and the other theme `bg-*.jpg`): cozy lamp-corner photo by Claire on Unsplash (Unsplash License, no credit needed). Stored locally so it works offline.
 - `tools/stations.py`: finds SomaFM stations to add to the dropdown (see below).
 
 ## Profiles and passwords

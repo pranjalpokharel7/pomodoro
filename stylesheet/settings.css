@@ -152,8 +152,8 @@ body.locked .quote { display: none; }
 .theme-swatch:hover { transform: scale(1.12); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22); }
 .theme-swatch[data-selected] { outline-color: var(--accent); box-shadow: 0 0 0 1px white, 0 2px 8px rgba(0,0,0,0.2); }
 
-.theme-swatch[data-theme="cozy"]      { background-image: url("../bg.jpg"); }
+.theme-swatch[data-theme="cozy"]      { background-image: url("../static/bg.jpg"); }
 
-.theme-swatch[data-theme="forest"]    { background-image: url("../bg-forest.jpg"); }
-.theme-swatch[data-theme="academia"]  { background-image: url("../bg-academia.jpg"); }
-.theme-swatch[data-theme="fireplace"] { background-image: url("../bg-fireplace.jpg"); }
+.theme-swatch[data-theme="forest"]    { background-image: url("../static/bg-forest.jpg"); }
+.theme-swatch[data-theme="academia"]  { background-image: url("../static/bg-academia.jpg"); }
+.theme-swatch[data-theme="fireplace"] { background-image: url("../static/bg-fireplace.jpg"); }
