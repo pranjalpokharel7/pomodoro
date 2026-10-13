@@ -150,3 +150,9 @@
   outline: none;
 }
 .stats-user-pick:focus { border-color: var(--accent); }
+
+/* Hourly chart: 24 slim bars, tooltip shows the hour. */
+.hours { gap: 2px; }
+.hours .bar { max-width: none; }
+.hoursday { font: inherit; font-size: 0.7rem; margin-left: 0.4rem; background: transparent; color: inherit; border: 0; opacity: 0.8; }
+.hours + .chart-title { margin-top: 1rem; }

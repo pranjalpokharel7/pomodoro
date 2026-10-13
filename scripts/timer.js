@@ -15,6 +15,10 @@ let sessions = Number(localStorage.getItem('pomo-sessions')) || 0;
 let days = {};
 try { days = JSON.parse(localStorage.getItem('pomo-days')) || {}; } catch {}
 const DAYS_KEPT = 30;
+// Focus segments, [{ s, e }] in ms: one per Start-to-stop run, grown on every tick so a crash loses
+// at most a tick. Powers the hourly chart (scripts/stats.js). Kept for DAYS_KEPT days.
+let segments = [];
+try { segments = JSON.parse(localStorage.getItem('pomo-segments')) || []; } catch {}
 
 const duration = m => Math.max(1, Number(inputs[m].value) || 1) * 60000;
 
@@ -58,6 +62,9 @@ function save() {
   localStorage.setItem('pomo-sessions', sessions);
   pruneDays();
   localStorage.setItem('pomo-days', JSON.stringify(days));
+  const cutoff = Date.now() - DAYS_KEPT * 86400000;
+  segments = segments.filter(g => g.e >= cutoff);
+  localStorage.setItem('pomo-segments', JSON.stringify(segments));
 }
 
 function setMode(m) {
@@ -100,7 +107,13 @@ function pause() {
 
 function tick() {
   const now = Date.now();
-  if (mode === 'focus') { total += now - lastTick; today().ms += now - lastTick; }
+  if (mode === 'focus') {
+    total += now - lastTick;
+    today().ms += now - lastTick;
+    const last = segments[segments.length - 1];
+    if (last?.e === lastTick) last.e = now; // same run: extend it, else Start opened a new one
+    else segments.push({ s: lastTick, e: now });
+  }
   lastTick = now;
   remaining = Math.max(0, endAt - now);
   if (remaining === 0) return finish();
@@ -155,6 +168,7 @@ $('clear').onclick = () => {
   total = 0;
   sessions = 0;
   days = {};
+  segments = [];
   save();
   window.clearHistory?.(); // also wipe the session history and current task
   show();

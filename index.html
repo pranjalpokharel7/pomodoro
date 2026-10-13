@@ -6,15 +6,15 @@
   <title>Pomodoro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="stylesheet/theme.css?v=22">
-  <link rel="stylesheet" href="stylesheet/base.css?v=22">
-  <link rel="stylesheet" href="stylesheet/buttons.css?v=22">
-  <link rel="stylesheet" href="stylesheet/stats.css?v=22">
-  <link rel="stylesheet" href="stylesheet/charts.css?v=22">
-  <link rel="stylesheet" href="stylesheet/timer.css?v=22">
-  <link rel="stylesheet" href="stylesheet/radio.css?v=22">
-  <link rel="stylesheet" href="stylesheet/settings.css?v=22">
-  <link rel="stylesheet" href="stylesheet/quotes.css?v=22">
+  <link rel="stylesheet" href="stylesheet/theme.css?v=23">
+  <link rel="stylesheet" href="stylesheet/base.css?v=23">
+  <link rel="stylesheet" href="stylesheet/buttons.css?v=23">
+  <link rel="stylesheet" href="stylesheet/stats.css?v=23">
+  <link rel="stylesheet" href="stylesheet/charts.css?v=23">
+  <link rel="stylesheet" href="stylesheet/timer.css?v=23">
+  <link rel="stylesheet" href="stylesheet/radio.css?v=23">
+  <link rel="stylesheet" href="stylesheet/settings.css?v=23">
+  <link rel="stylesheet" href="stylesheet/quotes.css?v=23">
 </head>
 <body data-mode="focus" class="locked">
   <script>(function(){var t=localStorage.getItem('pomo-theme');if(t&&t!=='cozy')document.body.dataset.theme=t;})();</script>
@@ -68,6 +68,8 @@
         <button data-srange="30">30 days</button>
       </div>
       <div id="daily" class="daily"></div>
+      <p class="chart-title">Hours <input type="date" id="hoursday" class="hoursday"></p>
+      <div id="hours" class="daily hours"></div>
       <p class="chart-title">By task</p>
       <div id="bytask" class="bytask"></div>
       <p class="chart-title">Recent sessions</p>
@@ -140,14 +142,14 @@
 
   </main>
   <p id="quote" class="quote" role="status" aria-live="polite"></p>
-  <script src="scripts/common.js?v=22"></script>
-  <script src="scripts/timer.js?v=22"></script>
-  <script src="scripts/tasks.js?v=22"></script>
-  <script src="scripts/radio.js?v=22"></script>
-  <script src="scripts/quotes.js?v=22"></script>
-  <script src="scripts/settings.js?v=22"></script>
-  <script src="scripts/profile.js?v=22"></script>
-  <script src="scripts/stats.js?v=22"></script>
-  <script src="scripts/main.js?v=22"></script>
+  <script src="scripts/common.js?v=23"></script>
+  <script src="scripts/timer.js?v=23"></script>
+  <script src="scripts/tasks.js?v=23"></script>
+  <script src="scripts/radio.js?v=23"></script>
+  <script src="scripts/quotes.js?v=23"></script>
+  <script src="scripts/settings.js?v=23"></script>
+  <script src="scripts/profile.js?v=23"></script>
+  <script src="scripts/stats.js?v=23"></script>
+  <script src="scripts/main.js?v=23"></script>
 </body>
 </html>

@@ -96,6 +96,43 @@ function renderDaily() {
   }));
 }
 
+// Focus minutes in each hour of one day, cut from the segments. A segment can span hours.
+function hourMs(segs, key) {
+  const out = Array(24).fill(0);
+  for (const g of segs) {
+    for (let t = g.s; t < g.e;) {
+      const d = new Date(t);
+      const end = Math.min(g.e, new Date(d).setHours(d.getHours() + 1, 0, 0, 0));
+      if (dayKey(t) === key) out[d.getHours()] += end - t;
+      t = end;
+    }
+  }
+  return out;
+}
+
+// 24 vertical bars, each out of a full 60 minutes.
+function renderHours() {
+  const key = $('hoursday').value || dayKey();
+  const ms = hourMs(viewingUser?.segments || segments, key);
+  const box = $('hours');
+  if (!ms.some(Boolean)) return box.replaceChildren(empty('No hourly data for this day.'));
+  box.replaceChildren(...ms.map((v, h) => {
+    const col = mkEl('div', 'col');
+    col.title = `${pad(h)}:00 · ${hm(v)}`;
+    const bar = mkEl('div', 'bar');
+    bar.style.height = `${(v / 3600000) * 100}%`;
+    const seg = mkEl('div', 'seg');
+    seg.style.height = '100%';
+    seg.style.background = 'var(--accent)';
+    bar.append(seg);
+    col.append(bar, mkEl('span', 'lbl', h % 6 ? '\u00a0' : h));
+    return col;
+  }));
+}
+$('hoursday').value = dayKey();
+$('hoursday').max = dayKey();
+$('hoursday').onchange = renderHours;
+
 // Horizontal bars, longest task first, the rest grouped as "Other".
 function renderTasks() {
   const tasksData = viewingUser?.tasks || taskTotals;
@@ -154,6 +191,7 @@ function renderHistoryForView() {
 function renderStats() {
   populateUserPick();
   renderDaily();
+  renderHours();
   renderTasks();
   renderHistoryForView();
 }
@@ -171,7 +209,8 @@ if (userSel) {
     for (const t of (Array.isArray(v.tasks) ? v.tasks : [])) {
       if (t?.label) tasks[t.label] = { ms: Number(t.ms) || 0, n: Number(t.n) || 0 };
     }
-    viewingUser = { days: v.days || {}, tasks, log: Array.isArray(v.log) ? v.log : [] };
+    viewingUser = { days: v.days || {}, tasks, log: Array.isArray(v.log) ? v.log : [],
+      segments: (Array.isArray(v.segments) ? v.segments : []).filter(g => Number(g?.s) && Number(g?.e)) };
     renderStats();
   };
 }
