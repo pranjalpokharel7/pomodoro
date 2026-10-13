@@ -40,6 +40,7 @@ function populateUserPick() {
   }
   // Restore previous selection if still in the list.
   if (prev && sel.querySelector(`[value="${prev}"]`)) sel.value = prev;
+  syncDropdown(sel);
 }
 
 // Build a { dateKey → { label: ms } } map from the session log for stacked daily bars.
@@ -129,9 +130,6 @@ function renderHours() {
     return col;
   }));
 }
-$('hoursday').value = dayKey();
-$('hoursday').max = dayKey();
-$('hoursday').onchange = renderHours;
 
 // Horizontal bars, longest task first, the rest grouped as "Other".
 function renderTasks() {
@@ -206,7 +204,7 @@ $('stats').addEventListener('toggle', () => {
     renderStats();
   } else {
     viewingUser = null;
-    if (userSel) userSel.value = '';
+    if (userSel) { userSel.value = ''; syncDropdown(userSel); }
   }
 });
 

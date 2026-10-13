@@ -1,0 +1,40 @@
+/* Themed dropdown (scripts/dropdown.js), built over a <select class="themed">. */
+.dd { position: relative; margin-bottom: 0.6rem; }
+.dd-btn {
+  width: 100%;
+  font: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  padding: 0.28rem 1.6rem 0.28rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0.7rem;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
+  cursor: pointer;
+  position: relative;
+}
+.dd-btn::after { content: ""; position: absolute; right: 0.8rem; top: 50%; width: 0.4rem; height: 0.4rem; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-70%) rotate(45deg); opacity: 0.6; }
+.dd:has(.dd-list:not([hidden])) .dd-btn { border-radius: 0.7rem 0.7rem 0 0; background: rgba(255, 255, 255, 0.97); }
+.dd-btn:hover { transform: none; box-shadow: none; }
+.dd-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 10;
+  margin: 0;
+  padding: 0.3rem;
+  list-style: none;
+  max-height: 12rem;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-top: 0;
+  border-radius: 0 0 0.7rem 0.7rem;
+  box-shadow: 0 8px 24px rgba(255, 127, 163, 0.25);
+  font-size: 0.8rem;
+  color: var(--ink);
+}
+.dd-list[hidden] { display: none; }
+.dd-list li { padding: 0.3rem 0.6rem; border-radius: 0.6rem; cursor: pointer; }
+.dd-list li:hover { background: var(--accent); color: #fff; }
