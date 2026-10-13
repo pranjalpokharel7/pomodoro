@@ -2,7 +2,7 @@
 //   - Daily focus time from `days` (scripts/timer.js), 7 or 30 day range.
 //   - Time per task from `taskTotals` (scripts/tasks.js), top few + a grouped "Other".
 // No chart library: bars are divs sized by percentage. renderStats() is called on panel open,
-// when a session finishes (logFocus), on clear, and after a cloud sync/sign-in (profile.js).
+// when a session finishes (logFocus), on sign-out, and after a cloud sync/sign-in (profile.js).
 // The #stats-user dropdown lets signed-in users view any other user's two charts. The data
 // comes from window.getLastAll() (profile.js) — no extra network call.
 const TOP_TASKS = 6;
@@ -162,38 +162,11 @@ function renderTasks() {
   }));
 }
 
-// Render session history for whoever is selected: their log when viewing someone else,
-// own log (via tasks.js) when back on "My stats".
-function renderHistoryForView() {
-  if (!viewingUser) { window.renderHistory?.(); return; }
-  const log = (viewingUser.log || []).slice(0, 5);
-  $('history').replaceChildren(...log.map(e => {
-    const row = document.createElement('div');
-    row.className = 'hrow';
-    const lbl = document.createElement('span');
-    lbl.className = 'hlabel';
-    const color = window.tagColor?.(e.label);
-    if (color) {
-      const dot = document.createElement('span');
-      dot.className = 'hdot';
-      dot.style.background = color;
-      lbl.append(dot);
-    }
-    lbl.append(document.createTextNode(e.label));
-    const t = document.createElement('span');
-    t.className = 'htime';
-    t.textContent = hm(e.ms);
-    row.append(lbl, t);
-    return row;
-  }));
-}
-
 function renderStats() {
   populateUserPick();
   renderDaily();
   renderHours();
   renderTasks();
-  renderHistoryForView();
 }
 window.renderStats = renderStats;
 

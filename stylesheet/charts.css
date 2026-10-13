@@ -132,8 +132,8 @@
   margin: 0;
 }
 
-/* Hide the "Recent sessions" title until there is a session. */
-.chart-title:has(+ .history:empty) { display: none; }
+/* Recent-sessions button sits right of the 📊 one. */
+.hist { left: 4.4rem; }
 
 /* User picker at the top of the stats panel. */
 .stats-user-pick {

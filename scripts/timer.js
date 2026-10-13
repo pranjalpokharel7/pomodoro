@@ -163,18 +163,6 @@ $('skip').onclick = () => {
   start();
 };
 
-$('clear').onclick = () => {
-  if (!confirm('Clear all your stats and session history?')) return;
-  total = 0;
-  sessions = 0;
-  days = {};
-  segments = [];
-  save();
-  window.clearHistory?.(); // also wipe the session history and current task
-  show();
-  window.sync?.(true); // push the wipe without merging the cloud copy back in
-};
-
 $('reset').onclick = () => {
   stop();
   setMode(mode);

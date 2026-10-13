@@ -188,11 +188,10 @@ function mergeCloud(c) {
 }
 
 // Pull and merge my cloud record, push my score (including per-day buckets and a focus heartbeat), then show everyone's.
-// overwrite: skip the merge, so 🗑️ clear really wipes the cloud copy.
-async function sync(overwrite) {
+async function sync() {
   if (!auth) return clearBoard();
   try {
-    if (overwrite !== true) mergeCloud(await get(`/${auth.uid}`));
+    mergeCloud(await get(`/${auth.uid}`));
     await fetch(await url(`/${auth.uid}`), {
       method: 'PUT',
       body: JSON.stringify({

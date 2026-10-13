@@ -67,7 +67,6 @@ function renderTags(sel) {
   updateTaskBorder();
 }
 window.renderTags = renderTags; // profile.js calls this after a sign-in merge brings in new tags
-window.renderHistory = renderHistory; // stats.js calls this to restore own history when user picker resets
 window.getSessionLog = () => sessionLog; // stats.js reads this to build per-day tag breakdowns
 
 // Record a finished focus session. Called by finish() in scripts/timer.js.
@@ -85,7 +84,7 @@ function logFocus(ms) {
   window.renderStats?.();
 }
 
-// Wipe the log and the current task. Called on 🗑️ clear (timer.js) and sign-out (profile.js).
+// Wipe the log and the current task. Called on sign-out (profile.js).
 function clearHistory() {
   sessionLog = [];
   taskTotals = {};
@@ -100,7 +99,7 @@ function clearHistory() {
 }
 
 function renderHistory() {
-  $('history').replaceChildren(...sessionLog.slice(0, 5).map(e => {
+  const rows = sessionLog.map(e => {
     const row = document.createElement('div');
     row.className = 'hrow';
     const label = document.createElement('span');
@@ -118,7 +117,14 @@ function renderHistory() {
     time.textContent = hm(e.ms); // compact "25m" / "1h 5m", from scripts/timer.js
     row.append(label, time);
     return row;
-  }));
+  });
+  if (!rows.length) {
+    const p = document.createElement('p');
+    p.className = 'chart-empty';
+    p.textContent = 'No sessions yet';
+    rows.push(p);
+  }
+  $('history').replaceChildren(...rows);
 }
 
 // Picking a tag sets the current label (and pushes it to the leaderboard). Choosing "➕ New tag…"

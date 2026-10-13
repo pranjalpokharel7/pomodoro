@@ -96,8 +96,11 @@
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  max-height: 6.5rem;
+  max-height: 14rem;
   overflow-y: auto;
+  padding-right: 0.4rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 55%, transparent) transparent;
   font-variant-numeric: tabular-nums;
 }
 
@@ -128,4 +131,6 @@
   flex-shrink: 0;
 }
 
+.hlabel { flex: 1; }
 .htime { flex: none; }
+
