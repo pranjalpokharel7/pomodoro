@@ -4,14 +4,12 @@ let playing = false;
 // Saved YouTube links, [{ name, kind: 'list' | 'video', id }].
 let ytLinks = [];
 try { ytLinks = JSON.parse(localStorage.getItem('pomo-yt')) || []; } catch {}
-const NEW_YT = '__yt__'; // sentinel value of the "add a link" option
-
 function renderYt() {
   $('station').replaceChildren(
     ...(ytLinks.length ? [] : [new Option('🎵 No music yet', '')]),
     ...ytLinks.map(l => new Option(l.name, `yt:${l.kind}:${l.id}`)),
-    new Option('➕ Add YouTube link…', NEW_YT),
   );
+  $('ytdel').hidden = !ytLinks.length;
 }
 renderYt();
 
@@ -28,29 +26,67 @@ function parseYouTube(link) {
 }
 
 const savedStation = localStorage.getItem('pomo-station');
-if ([...$('station').options].some(o => o.value === savedStation && o.value !== NEW_YT)) $('station').value = savedStation;
+if ([...$('station').options].some(o => o.value === savedStation)) $('station').value = savedStation;
 let lastStation = $('station').value;
 let userVol = Number(localStorage.getItem('pomo-vol') ?? 0.5);
 $('vol').value = userVol;
 
-// Ask for a link, save it and select it. False if cancelled or not a YouTube link.
-function addLink() {
-  const link = prompt('Paste a YouTube playlist or video link (public or unlisted):');
-  const p = link && parseYouTube(link);
-  if (!p) {
-    if (link) alert("That doesn't look like a YouTube playlist or video link.");
-    $('station').value = lastStation;
-    return false;
-  }
+// Add-link popup (a styled <dialog> in place of prompt/alert). Both a valid link and a name are required.
+function openForm() {
+  $('yterr').textContent = '';
+  $('ytdlg').showModal();
+}
+
+const closeForm = () => $('ytdlg').close();
+$('ytdlg').onclose = () => {
+  $('ytform').reset();
+  delete $('ytform').dataset.play;
+};
+$('ytdlg').onclick = e => e.target === $('ytdlg') && closeForm(); // backdrop click
+$('ytadd').onclick = openForm;
+$('ytcancel').onclick = closeForm;
+
+$('ytform').onsubmit = e => {
+  e.preventDefault();
+  const p = parseYouTube($('ytlink').value);
+  const name = $('ytname').value.trim();
+  if (!p) return ($('yterr').textContent = "That doesn't look like a YouTube playlist or video link.");
+  if (!name) return ($('yterr').textContent = 'Give it a name.');
   if (!ytLinks.some(l => l.id === p.id)) {
-    const name = (prompt('Name it:', p.kind === 'list' ? 'My playlist' : 'YouTube video') || 'YouTube').trim().slice(0, 40);
     ytLinks.push({ name: `▶ ${name}`, ...p });
     localStorage.setItem('pomo-yt', JSON.stringify(ytLinks));
     renderYt();
   }
   $('station').value = lastStation = `yt:${p.kind}:${p.id}`;
   localStorage.setItem('pomo-station', lastStation);
-  return true;
+  const play = playing || $('ytform').dataset.play;
+  closeForm();
+  if (play) radioPlay();
+};
+
+// Remove the selected link: first click arms the button, a second click within 3s removes.
+let delTimer = 0;
+$('ytdel').onclick = () => {
+  if (!$('ytdel').classList.contains('active')) {
+    $('ytdel').classList.add('active');
+    $('ytdel').title = 'Click again to remove';
+    delTimer = setTimeout(disarmDel, 3000);
+    return;
+  }
+  disarmDel();
+  ytLinks = ytLinks.filter(l => `yt:${l.kind}:${l.id}` !== lastStation);
+  localStorage.setItem('pomo-yt', JSON.stringify(ytLinks));
+  renderYt(); // selects the first remaining link, or the placeholder
+  if (playing) radioStop(PLAY, 'Play music');
+  ytLoaded = '';
+  lastStation = $('station').value;
+  localStorage.setItem('pomo-station', lastStation);
+};
+
+function disarmDel() {
+  clearTimeout(delTimer);
+  $('ytdel').classList.remove('active');
+  $('ytdel').title = 'Remove this link';
 }
 
 // Lazy-loaded YouTube player, hidden by CSS (#yt in stylesheet/radio.css).
@@ -119,7 +155,10 @@ function radioStop(icon, tip) {
 
 function radioPlay() {
   const v = $('station').value;
-  if (!v.startsWith('yt:') && !addLink()) return; // nothing saved yet: ask for a link first
+  if (!v.startsWith('yt:')) { // nothing saved yet: ask for a link first, play once it's saved
+    $('ytform').dataset.play = 1;
+    return openForm();
+  }
   playing = true;
   radioLabel(PAUSE, 'Pause music'); // show pause right away, the player can take a while to start
   loadYt().then(() => {
@@ -139,12 +178,9 @@ function radioPlay() {
 $('music').onclick = () => (playing ? radioStop(PLAY, 'Play music') : radioPlay());
 
 $('station').onchange = () => {
-  if ($('station').value === NEW_YT) {
-    if (!addLink()) return;
-  } else {
-    lastStation = $('station').value;
-    localStorage.setItem('pomo-station', lastStation);
-  }
+  lastStation = $('station').value;
+  localStorage.setItem('pomo-station', lastStation);
+  disarmDel();
   if (playing) radioPlay();
 };
 

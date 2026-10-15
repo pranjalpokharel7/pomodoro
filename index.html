@@ -6,17 +6,17 @@
   <title>Pomodoro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="stylesheet/theme.css?v=26">
-  <link rel="stylesheet" href="stylesheet/base.css?v=26">
-  <link rel="stylesheet" href="stylesheet/buttons.css?v=26">
-  <link rel="stylesheet" href="stylesheet/stats.css?v=26">
-  <link rel="stylesheet" href="stylesheet/charts.css?v=26">
-  <link rel="stylesheet" href="stylesheet/calendar.css?v=26">
-  <link rel="stylesheet" href="stylesheet/dropdown.css?v=26">
-  <link rel="stylesheet" href="stylesheet/timer.css?v=26">
-  <link rel="stylesheet" href="stylesheet/radio.css?v=26">
-  <link rel="stylesheet" href="stylesheet/settings.css?v=26">
-  <link rel="stylesheet" href="stylesheet/quotes.css?v=26">
+  <link rel="stylesheet" href="stylesheet/theme.css?v=27">
+  <link rel="stylesheet" href="stylesheet/base.css?v=27">
+  <link rel="stylesheet" href="stylesheet/buttons.css?v=27">
+  <link rel="stylesheet" href="stylesheet/stats.css?v=27">
+  <link rel="stylesheet" href="stylesheet/charts.css?v=27">
+  <link rel="stylesheet" href="stylesheet/calendar.css?v=27">
+  <link rel="stylesheet" href="stylesheet/dropdown.css?v=27">
+  <link rel="stylesheet" href="stylesheet/timer.css?v=27">
+  <link rel="stylesheet" href="stylesheet/radio.css?v=27">
+  <link rel="stylesheet" href="stylesheet/settings.css?v=27">
+  <link rel="stylesheet" href="stylesheet/quotes.css?v=27">
 </head>
 <body data-mode="focus" class="locked">
   <script>(function(){var t=localStorage.getItem('pomo-theme');if(t&&t!=='cozy')document.body.dataset.theme=t;})();</script>
@@ -125,22 +125,35 @@
     </div>
     <div class="music">
       <select id="station" aria-label="Music"></select>
+      <button id="ytadd" class="icon" aria-label="Add a YouTube link" title="Add a YouTube link">➕</button>
+      <button id="ytdel" class="icon" aria-label="Remove this link" title="Remove this link">🗑</button>
     </div>
     <div id="yt"></div>
     <p class="credit">Streamed from <a href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a></p>
 
   </main>
+  <dialog id="ytdlg" class="ytdlg">
+    <form id="ytform" novalidate>
+      <h3>Add music</h3>
+      <input id="ytlink" type="url" placeholder="YouTube playlist or video link" aria-label="YouTube link">
+      <input id="ytname" placeholder="Name it" maxlength="40" aria-label="Name">
+      <p id="yterr" class="yterr" role="alert"></p>
+      <div>
+        <button class="primary">Save</button>
+      </div>
+    </form>
+  </dialog>
   <p id="quote" class="quote" role="status" aria-live="polite"></p>
-  <script src="scripts/common.js?v=26"></script>
-  <script src="scripts/timer.js?v=26"></script>
-  <script src="scripts/tasks.js?v=26"></script>
-  <script src="scripts/radio.js?v=26"></script>
-  <script src="scripts/quotes.js?v=26"></script>
-  <script src="scripts/settings.js?v=26"></script>
-  <script src="scripts/profile.js?v=26"></script>
-  <script src="scripts/dropdown.js?v=26"></script>
-  <script src="scripts/stats.js?v=26"></script>
-  <script src="scripts/calendar.js?v=26"></script>
-  <script src="scripts/main.js?v=26"></script>
+  <script src="scripts/common.js?v=27"></script>
+  <script src="scripts/timer.js?v=27"></script>
+  <script src="scripts/tasks.js?v=27"></script>
+  <script src="scripts/radio.js?v=27"></script>
+  <script src="scripts/quotes.js?v=27"></script>
+  <script src="scripts/settings.js?v=27"></script>
+  <script src="scripts/profile.js?v=27"></script>
+  <script src="scripts/dropdown.js?v=27"></script>
+  <script src="scripts/stats.js?v=27"></script>
+  <script src="scripts/calendar.js?v=27"></script>
+  <script src="scripts/main.js?v=27"></script>
 </body>
 </html>
