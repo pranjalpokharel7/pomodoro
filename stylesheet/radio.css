@@ -39,3 +39,6 @@
 }
 
 .credit a { color: inherit; }
+
+/* Hidden YouTube player. YouTube's terms want it visible (200x200+); if it ever stops playing, show it. */
+#yt { position: fixed; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

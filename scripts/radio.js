@@ -1,10 +1,87 @@
-// Lofi radio, SomaFM streams. Station ids live in the #station dropdown.
-const stationUrl = () => `https://ice1.somafm.com/${$('station').value}-128-mp3`;
-const radio = new Audio();
+// Music: saved YouTube links in the #station dropdown, values "yt:list:<id>" / "yt:video:<id>".
+let playing = false;
+
+// Saved YouTube links, [{ name, kind: 'list' | 'video', id }].
+let ytLinks = [];
+try { ytLinks = JSON.parse(localStorage.getItem('pomo-yt')) || []; } catch {}
+const NEW_YT = '__yt__'; // sentinel value of the "add a link" option
+
+function renderYt() {
+  $('station').replaceChildren(
+    ...(ytLinks.length ? [] : [new Option('🎵 No music yet', '')]),
+    ...ytLinks.map(l => new Option(l.name, `yt:${l.kind}:${l.id}`)),
+    new Option('➕ Add YouTube link…', NEW_YT),
+  );
+}
+renderYt();
+
+// Playlist link (list=) wins over the video in it; otherwise a watch, youtu.be, live, shorts or embed link.
+function parseYouTube(link) {
+  let u;
+  try { u = new URL(link.trim()); } catch { return null; }
+  if (!/(^|\.)youtube\.com$|^youtu\.be$/.test(u.hostname)) return null;
+  const list = u.searchParams.get('list');
+  if (list && /^[\w-]+$/.test(list)) return { kind: 'list', id: list };
+  const id = u.hostname === 'youtu.be' ? u.pathname.slice(1)
+    : u.searchParams.get('v') || u.pathname.match(/^\/(?:live|shorts|embed)\/([^/]+)/)?.[1];
+  return /^[\w-]{11}$/.test(id) ? { kind: 'video', id } : null;
+}
+
 const savedStation = localStorage.getItem('pomo-station');
-if ([...$('station').options].some(o => o.value === savedStation)) $('station').value = savedStation;
+if ([...$('station').options].some(o => o.value === savedStation && o.value !== NEW_YT)) $('station').value = savedStation;
+let lastStation = $('station').value;
 let userVol = Number(localStorage.getItem('pomo-vol') ?? 0.5);
 $('vol').value = userVol;
+
+// Ask for a link, save it and select it. False if cancelled or not a YouTube link.
+function addLink() {
+  const link = prompt('Paste a YouTube playlist or video link (public or unlisted):');
+  const p = link && parseYouTube(link);
+  if (!p) {
+    if (link) alert("That doesn't look like a YouTube playlist or video link.");
+    $('station').value = lastStation;
+    return false;
+  }
+  if (!ytLinks.some(l => l.id === p.id)) {
+    const name = (prompt('Name it:', p.kind === 'list' ? 'My playlist' : 'YouTube video') || 'YouTube').trim().slice(0, 40);
+    ytLinks.push({ name: `▶ ${name}`, ...p });
+    localStorage.setItem('pomo-yt', JSON.stringify(ytLinks));
+    renderYt();
+  }
+  $('station').value = lastStation = `yt:${p.kind}:${p.id}`;
+  localStorage.setItem('pomo-station', lastStation);
+  return true;
+}
+
+// Lazy-loaded YouTube player, hidden by CSS (#yt in stylesheet/radio.css).
+let yt = null, ytReady = null, ytLoaded = '', ytFails = 0, ytShuffle = false;
+function loadYt() {
+  return (ytReady ??= new Promise((res, rej) => {
+    window.onYouTubeIframeAPIReady = () => {
+      yt = new YT.Player('yt', {
+        width: 1, height: 1, playerVars: { playsinline: 1 },
+        events: { onReady: res, onError: ytError, onStateChange: ytState },
+      });
+    };
+    const s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.onerror = () => { ytReady = null; s.remove(); rej(); };
+    document.head.append(s);
+  }));
+}
+
+function ytState(e) {
+  if (e.data !== YT.PlayerState.PLAYING) return;
+  ytFails = 0;
+  // Shuffle only takes once the playlist has loaded, so the first song is always the list's first.
+  if (ytShuffle) { ytShuffle = false; yt.setShuffle(true); yt.setLoop(true); }
+}
+
+// Skip videos that can't be embedded; give up on a single video or a run of failures.
+function ytError() {
+  if (yt.getPlaylist()?.length > 1 && ++ytFails < 5) yt.nextVideo();
+  else { ytLoaded = ''; radioStop('⚠️', 'YouTube unavailable'); }
+}
 
 // Music fades over the last 10s of an interval, then goes silent while the chime plays.
 const FADE_MS = 10000;
@@ -15,9 +92,8 @@ function applyVolume() {
   let f = 1;
   if (Date.now() < quietUntil) f = 0;
   else if (timer && remaining < FADE_MS) f = Math.max(0.15, remaining / FADE_MS);
-  radio.volume = userVol * f;
+  yt?.setVolume?.(Math.round(userVol * f * 100));
 }
-applyVolume();
 
 // Silence the music while the chime plays.
 function duckForChime() {
@@ -36,30 +112,41 @@ const radioLabel = (icon, tip) => {
 };
 
 function radioStop(icon, tip) {
-  // Drop the source so a live stream stops downloading and resumes live next time.
-  radio.pause();
-  radio.removeAttribute('src');
-  radio.load();
+  playing = false;
+  yt?.pauseVideo?.();
   radioLabel(icon, tip);
 }
 
 function radioPlay() {
-  const url = (radio.src = stationUrl());
-  radioLabel(PAUSE, 'Pause lofi'); // show pause right away, the stream can take a while to start
-  radio.play().catch(() => {
-    // Ignore the abort from a newer station pick replacing this one.
-    if (radio.src === url) radioStop('⚠️', 'Radio offline');
-  });
+  const v = $('station').value;
+  if (!v.startsWith('yt:') && !addLink()) return; // nothing saved yet: ask for a link first
+  playing = true;
+  radioLabel(PAUSE, 'Pause music'); // show pause right away, the player can take a while to start
+  loadYt().then(() => {
+    const v = $('station').value;
+    if (!playing) return; // paused while loading
+    applyVolume();
+    if (ytLoaded === v) return yt.playVideo(); // resume where it paused
+    ytLoaded = v;
+    const [, kind, id] = v.split(':');
+    if (kind === 'list') {
+      ytShuffle = true;
+      yt.loadPlaylist({ list: id, listType: 'playlist' });
+    } else yt.loadVideoById(id);
+  }, () => radioStop('⚠️', 'YouTube offline'));
 }
 
-$('music').onclick = () => (radio.src ? radioStop(PLAY, 'Play lofi') : radioPlay());
+$('music').onclick = () => (playing ? radioStop(PLAY, 'Play music') : radioPlay());
 
 $('station').onchange = () => {
-  localStorage.setItem('pomo-station', $('station').value);
-  if (radio.src) radioPlay();
+  if ($('station').value === NEW_YT) {
+    if (!addLink()) return;
+  } else {
+    lastStation = $('station').value;
+    localStorage.setItem('pomo-station', lastStation);
+  }
+  if (playing) radioPlay();
 };
-
-radio.onerror = () => radio.src && radioStop('⚠️', 'Radio offline');
 
 $('vol').oninput = () => {
   userVol = Number($('vol').value);

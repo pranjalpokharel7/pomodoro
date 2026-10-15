@@ -6,17 +6,17 @@
   <title>Pomodoro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="stylesheet/theme.css?v=25">
-  <link rel="stylesheet" href="stylesheet/base.css?v=25">
-  <link rel="stylesheet" href="stylesheet/buttons.css?v=25">
-  <link rel="stylesheet" href="stylesheet/stats.css?v=25">
-  <link rel="stylesheet" href="stylesheet/charts.css?v=25">
-  <link rel="stylesheet" href="stylesheet/calendar.css?v=25">
-  <link rel="stylesheet" href="stylesheet/dropdown.css?v=25">
-  <link rel="stylesheet" href="stylesheet/timer.css?v=25">
-  <link rel="stylesheet" href="stylesheet/radio.css?v=25">
-  <link rel="stylesheet" href="stylesheet/settings.css?v=25">
-  <link rel="stylesheet" href="stylesheet/quotes.css?v=25">
+  <link rel="stylesheet" href="stylesheet/theme.css?v=26">
+  <link rel="stylesheet" href="stylesheet/base.css?v=26">
+  <link rel="stylesheet" href="stylesheet/buttons.css?v=26">
+  <link rel="stylesheet" href="stylesheet/stats.css?v=26">
+  <link rel="stylesheet" href="stylesheet/charts.css?v=26">
+  <link rel="stylesheet" href="stylesheet/calendar.css?v=26">
+  <link rel="stylesheet" href="stylesheet/dropdown.css?v=26">
+  <link rel="stylesheet" href="stylesheet/timer.css?v=26">
+  <link rel="stylesheet" href="stylesheet/radio.css?v=26">
+  <link rel="stylesheet" href="stylesheet/settings.css?v=26">
+  <link rel="stylesheet" href="stylesheet/quotes.css?v=26">
 </head>
 <body data-mode="focus" class="locked">
   <script>(function(){var t=localStorage.getItem('pomo-theme');if(t&&t!=='cozy')document.body.dataset.theme=t;})();</script>
@@ -120,44 +120,27 @@
     </div>
 
     <div class="music">
-      <button id="music" aria-label="Play lofi radio" title="Play lofi"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg></button>
+      <button id="music" aria-label="Play music" title="Play music"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg></button>
       <input type="range" id="vol" min="0" max="1" step="0.05" value="0.5" aria-label="Volume">
     </div>
     <div class="music">
-      <select id="station" aria-label="Radio station">
-        <option value="groovesalad">Groove Salad · chill downtempo</option>
-        <option value="fluid">Fluid · instrumental hip-hop</option>
-        <option value="lush">Lush · soft vocals</option>
-        <option value="synphaera">Synphaera · calm ambient</option>
-        <option value="deepspaceone">Deep Space One · deep ambient</option>
-        <option value="dronezone">Drone Zone · atmospheric</option>
-        <option value="beatblender">Beat Blender · electronic</option>
-        <option value="chillits">Chillits Radio · chill, live</option>
-        <option value="darkzone">The Dark Zone · ambient</option>
-        <option value="doomed">Doomed · ambient, industrial</option>
-        <option value="dz2">Drone Zone 2 · ambient</option>
-        <option value="groovesalad2">Groove Salad 2 · ambient, electronic</option>
-        <option value="gsclassic">Groove Salad Classic · ambient, electronic</option>
-        <option value="missioncontrol">Mission Control · ambient, electronic</option>
-        <option value="n5md">n5MD Radio · specials</option>
-        <option value="sf1033">SF 10-33 · ambient, news</option>
-        <option value="spacestation">Space Station Soma · electronic</option>
-      </select>
+      <select id="station" aria-label="Music"></select>
     </div>
-    <p class="credit">Streamed from <a href="https://somafm.com" target="_blank" rel="noopener">SomaFM</a></p>
+    <div id="yt"></div>
+    <p class="credit">Streamed from <a href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a></p>
 
   </main>
   <p id="quote" class="quote" role="status" aria-live="polite"></p>
-  <script src="scripts/common.js?v=25"></script>
-  <script src="scripts/timer.js?v=25"></script>
-  <script src="scripts/tasks.js?v=25"></script>
-  <script src="scripts/radio.js?v=25"></script>
-  <script src="scripts/quotes.js?v=25"></script>
-  <script src="scripts/settings.js?v=25"></script>
-  <script src="scripts/profile.js?v=25"></script>
-  <script src="scripts/dropdown.js?v=25"></script>
-  <script src="scripts/stats.js?v=25"></script>
-  <script src="scripts/calendar.js?v=25"></script>
-  <script src="scripts/main.js?v=25"></script>
+  <script src="scripts/common.js?v=26"></script>
+  <script src="scripts/timer.js?v=26"></script>
+  <script src="scripts/tasks.js?v=26"></script>
+  <script src="scripts/radio.js?v=26"></script>
+  <script src="scripts/quotes.js?v=26"></script>
+  <script src="scripts/settings.js?v=26"></script>
+  <script src="scripts/profile.js?v=26"></script>
+  <script src="scripts/dropdown.js?v=26"></script>
+  <script src="scripts/stats.js?v=26"></script>
+  <script src="scripts/calendar.js?v=26"></script>
+  <script src="scripts/main.js?v=26"></script>
 </body>
 </html>

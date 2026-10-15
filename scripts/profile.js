@@ -38,7 +38,7 @@ const signOut = () => {
   auth = null;
   localStorage.removeItem('pomo-auth');
   stop();
-  radioStop(PLAY, 'Play lofi');
+  radioStop(PLAY, 'Play music');
   total = sessions = 0;
   days = {};
   segments = [];
