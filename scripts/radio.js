@@ -107,6 +107,8 @@ function loadYt() {
 }
 
 function ytState(e) {
+  // Playlists loop via setLoop; a single video just restarts.
+  if (e.data === YT.PlayerState.ENDED && playing && ytLoaded.startsWith('yt:video:')) return yt.seekTo(0);
   if (e.data !== YT.PlayerState.PLAYING) return;
   ytFails = 0;
   // Shuffle only takes once the playlist has loaded, so the first song is always the list's first.
