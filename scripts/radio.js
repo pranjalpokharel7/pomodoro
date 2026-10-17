@@ -44,7 +44,6 @@ $('ytdlg').onclose = () => {
 };
 $('ytdlg').onclick = e => e.target === $('ytdlg') && closeForm(); // backdrop click
 $('ytadd').onclick = openForm;
-$('ytcancel').onclick = closeForm;
 
 $('ytform').onsubmit = e => {
   e.preventDefault();
