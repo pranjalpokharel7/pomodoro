@@ -1,23 +1,9 @@
-// Pastel palette for tag colours — avoids the three accent hues
-// (focus pink #ff7fa3, short-break teal #5fcfa5, long-break blue #7f9cff).
-const TAG_COLORS = [
-  '#f4a96a', // peach
-  '#b39ddb', // soft purple
-  '#f7c96e', // butter yellow
-  '#ef9a9a', // dusty rose
-  '#a5d6a7', // soft sage
-  '#80cbc4', // muted aqua
-  '#ce93d8', // lilac
-  '#ffcc80', // warm apricot
-  '#90caf9', // powder blue
-  '#f48fb1', // blush
-];
-
 function tagColor(label) {
   if (!label) return null;
   let h = 0;
   for (const c of label) h = (h * 31 + c.charCodeAt(0)) & 0xffff;
-  return TAG_COLORS[h % TAG_COLORS.length];
+  const light = 68 + ((h >> 8) % 3) * 5;
+  return `hsl(${h % 360}, 62%, ${light}%)`;
 }
 window.tagColor = tagColor;
 
