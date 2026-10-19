@@ -132,10 +132,10 @@ function finish() {
     save();
     window.logFocus?.(duration('focus')); // record this session in the history log (see scripts/tasks.js)
     setMode(sessions % 4 === 0 ? 'long' : 'short');
+    start();
   } else {
-    setMode('focus');
+    setMode('focus'); // a new focus session only starts on an explicit click
   }
-  start();
 }
 
 function beep() {
